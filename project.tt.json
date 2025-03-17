@@ -1,0 +1,13 @@
+{
+  "miniprogramRoot": "./",
+  "projectname": "myRedBook",
+  "description": "my redbook miniprogram project.",
+  "appid": "touristappid",
+  "setting": {
+    "urlCheck": true,
+    "es6": false,
+    "postcss": false,
+    "minified": false
+  },
+  "compileType": "miniprogram"
+}
