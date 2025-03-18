@@ -8,7 +8,7 @@
     "es6": false,
     "enhance": false,
     "compileHotReLoad": false,
-    "postcss": false,
+    "postcss": true,
     "preloadBackgroundData": false,
     "minified": false,
     "newFeature": true,

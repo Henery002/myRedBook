@@ -40,16 +40,54 @@ export default defineConfig<'webpack5'>(async (merge, { command, mode }) => {
           }
         },
         cssModules: {
-          enable: false, // 默认为 false，如需使用 css modules 功能，则设为 true
+          enable: true, // 默认为 false，如需使用 css modules 功能，则设为 true
           config: {
             namingPattern: 'module', // 转换模式，取值为 global/module
             generateScopedName: '[name]__[local]___[hash:base64:5]'
           }
-        }
+        },
+        // 新增taroui第三方库样式警告过滤配置
+        // cssnano: {
+        //   preset: ['advanced', {
+        //     calc: false,
+        //     cssDeclarationSorter: false,
+        //     discardComments: { removeAll: true },
+        //     // 关键配置：禁用第三方库样式警告
+        //     mergeRules: false,
+        //     normalizeUrl: false
+        //   }]
+        // },
+        // mini下单独配置less
+        less: {},
+        sass: {
+          // implementation: require('sass'),
+          // sourceMap: true,
+        },
       },
       webpackChain(chain) {
-        chain.resolve.plugin('tsconfig-paths').use(TsconfigPathsPlugin)
+        chain.resolve.plugin('tsconfig-paths').use(TsconfigPathsPlugin);
+        
+        // chain.module.rule('sass').test(/\.s[ac]ss$/i).use('sass-loader').tap(options => ({
+        //   ...options,
+        //   sassOptions: {
+        //     quietDeps: true // 禁用第三方库警告
+        //   }
+        // }))
       }
+    },
+    sass: {
+      // implementation: require('sass'),
+      // sourceMap: true,
+    },
+    less: {
+      enable: true,
+      sourceMap: true,
+      implementation: require('less'),
+      additionalData: `@import "@/styles/variables.less";`, // 全局变量
+      lessOptions: {
+        javascriptEnabled: true,
+        modifyVars: {},
+      },
     },
     h5: {
       publicPath: '/',
