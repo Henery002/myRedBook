@@ -27,7 +27,12 @@ export default defineConfig<'webpack5'>(async (merge, { command, mode }) => {
       }
     },
     framework: 'react',
-    compiler: 'webpack5',
+    compiler: {
+      type: 'webpack5',
+      prebundle: {
+        exclude: ['taro-ui'], // 关闭taro-ui预编译，**以解决[taro-ui组件无法渲染问题]**
+      },
+    },
     cache: {
       enable: false // Webpack 持久化缓存配置，建议开启。默认配置请参考：https://docs.taro.zone/docs/config-detail#cache
     },
@@ -42,7 +47,7 @@ export default defineConfig<'webpack5'>(async (merge, { command, mode }) => {
         cssModules: {
           enable: true, // 默认为 false，如需使用 css modules 功能，则设为 true
           config: {
-            namingPattern: 'module', // 转换模式，取值为 global/module
+            namingPattern: 'global', // 转换模式，取值为 global/module，**是导入[x.less]文件中styles样式生效的关键设置**
             generateScopedName: '[name]__[local]___[hash:base64:5]'
           }
         },
@@ -66,6 +71,12 @@ export default defineConfig<'webpack5'>(async (merge, { command, mode }) => {
       },
       webpackChain(chain) {
         chain.resolve.plugin('tsconfig-paths').use(TsconfigPathsPlugin);
+
+        // chain.module
+        //   .rule('wxml')
+        //   .test(/\.wxml$/)
+        //   .use('wxml-loader')
+        //   .loader('wxml-loader');
         
         // chain.module.rule('sass').test(/\.s[ac]ss$/i).use('sass-loader').tap(options => ({
         //   ...options,
@@ -75,15 +86,15 @@ export default defineConfig<'webpack5'>(async (merge, { command, mode }) => {
         // }))
       }
     },
-    sass: {
-      // implementation: require('sass'),
-      // sourceMap: true,
-    },
+    sass: {},
     less: {
       enable: true,
       sourceMap: true,
       implementation: require('less'),
-      additionalData: `@import "@/styles/variables.less";`, // 全局变量
+      additionalData: `:global {
+        @import "~@/styles/variables.less";
+        @import "~@/styles/reset.less";
+      }`, // 全局变量
       lessOptions: {
         javascriptEnabled: true,
         modifyVars: {},

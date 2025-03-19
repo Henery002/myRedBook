@@ -1,0 +1,117 @@
+// TabBar
+.indexPage {
+  :global {
+    .at-tab-bar {
+      display: flex;
+      align-items: center;
+
+      .at-tab-bar__item {
+        padding: 16px 20px 28px 20px;
+      }
+
+      .at-tab-bar-title {
+        // font-size: 16px;
+      }
+
+      .at-tab-bar__item:nth-child(2) {
+        padding-top: 0;
+        padding-bottom: 0;
+
+        .at-tab-bar__icon,
+        .at-icon,
+        .at-icon-add {
+          font-size: 56px; // 32px
+          color: #fff;
+          font-weight: 400;
+          box-sizing: content-box;
+          padding: 6px 14px;
+          border-radius: 24px;
+          background-color: #f09c20;
+
+          &::before {
+            color: #fff;
+          }
+        }
+      }
+    }
+  }
+}
+
+// 登录页
+.loginContainer {
+  height: 100vh;
+  background: #fff;
+  display: flex;
+  flex-direction: column;
+
+  .content {
+    flex: 1;
+    padding: 0 64px;
+    overflow-y: auto;
+
+    .loginImage {
+      width: 100%;
+    }
+
+    .loginForm {
+      :global {
+        .at-input__title {
+          color: #f09c20;
+        }
+
+        .at-button {
+          margin-top: 48px;
+          // margin-top: 48rpx;
+          border: none;
+          background: #f09c20;
+          border-radius: 48px;
+        }
+      }
+
+      .agreement {
+        color: #999;
+        font-size: 24px;
+        text-align: center;
+        display: flex;
+        justify-content: center;
+        margin-top: 40px;
+
+        :global {
+          .at-checkbox__option-wrap {
+            padding: 0;
+
+            .at-checkbox__icon-cnt {
+              font-size: 20px;
+              width: 26px;
+              min-width: 26px;
+              height: 26px;
+              min-height: 26px;
+              margin: 2px 16px 0 0;
+            }
+          }
+        }
+
+        .link {
+          color: #1890ff;
+          margin: 0;
+        }
+      }
+
+    }
+  }
+}
+
+// 个人中心
+.userProfile {
+  //
+}
+
+// 首页瀑布流
+.listPagePage {
+  //
+}
+
+// 详情页
+.detailsPage {
+  // 
+}

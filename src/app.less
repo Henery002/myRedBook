@@ -3,3 +3,20 @@
 // 强制引入taro-ui样式（路径根据实际安装位置调整）
 // @import '~taro-ui/dist/style/components/icon.scss';
 // @import '~taro-ui/dist/style/components/flex.scss';
+
+:global {
+
+  .at-form::before,
+  .at-form::after,
+  .at-checkbox::before,
+  .at-checkbox::after,
+  .at-button::before,
+  .at-button::after {
+    display: none;
+  }
+
+  .at-nav-bar__left-view:active,
+  .at-checkbox__option:active {
+    background-color: inherit;
+  }
+}

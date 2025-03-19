@@ -1,12 +1,14 @@
 export default defineAppConfig({
   pages: [
-    'pages/login/login',
+    'pages/details/login',
+    'pages/details/list',
     'pages/index/index',
+    'pages/details/details'
   ],
   window: {
     backgroundTextStyle: 'light',
     navigationBarBackgroundColor: '#fff',
-    navigationBarTitleText: '小红书',
+    navigationBarTitleText: '小黄书',
     navigationBarTextStyle: 'black'
   }
 })
