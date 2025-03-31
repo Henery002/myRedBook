@@ -1,23 +1,20 @@
-import { Component, PropsWithChildren } from 'react'
+import { useDidShow, useDidHide } from "@tarojs/taro";
+import type { PropsWithChildren } from "react";
 
 import "taro-ui/dist/style/index.scss";
+import "./app.less";
 
-import './app.less'
+const App = (props: PropsWithChildren) => {
 
+  useDidShow(() => {
+    // 初始化逻辑
+  });
 
-  class App extends Component<PropsWithChildren> {
+  useDidHide(() => {
+    // 清理逻辑
+  });
 
-  componentDidMount () {}
-
-  componentDidShow () {}
-
-  componentDidHide () {}
-
-  // this.props.children 是将要会渲染的页面
-  render () {
-    return this.props.children
-  }
+  return props.children;
 }
 
-
-export default App
+export default App;

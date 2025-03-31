@@ -27,7 +27,7 @@ export default function LoginPage() {
       Taro.showToast({
         title: '登录成功',
         icon: 'success',
-        duration: 1500,
+        duration: 1000,
         success: () => {
           // Taro.switchTab({ url: '/pages/index/index' });
           Taro.navigateTo({
