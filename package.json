@@ -54,9 +54,11 @@
     "@tarojs/runtime": "4.0.9",
     "@tarojs/shared": "4.0.9",
     "@tarojs/taro": "4.0.9",
+    "immer": "^10.0.4",
     "react": "^18.0.0",
     "react-dom": "^18.0.0",
-    "taro-ui": "^3.2.1"
+    "taro-ui": "^3.2.1",
+    "zustand": "^4.5.2"
   },
   "devDependencies": {
     "@babel/core": "^7.8.0",
