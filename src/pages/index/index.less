@@ -1,6 +1,10 @@
 .BasicLayoutWrapper {
   height: 100vh;
   background-color: #e1e1e1;
+
+  .mainContentWrapper {
+    height: calc(100vh - 104px);
+  }
 }
 
 // TabBar
@@ -119,11 +123,12 @@
 
 // 个人中心
 .userPageWrapper {
-  //
+  // height: calc(100vh - 172px);
 }
 
 // 首页瀑布流
-.listPageWrapper {
+// 暂废弃
+.listPageWrapper222222 {
   width: 100%;
   height: calc(100% - 104px);
   display: flex;
@@ -163,6 +168,185 @@
         }
       }
     }
+  }
+}
+
+.listPageWrapper1 {
+  width: 100%;
+  height: 100%;
+  background-color: #f5f5f5;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  overflow: hidden;
+
+  .searchBar {
+    padding: 16px;
+    background-color: #fff;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+
+    :global {
+      .at-search-bar {
+        padding: 0;
+        background-color: #f5f5f5;
+        border-radius: 8px;
+
+        &__input-cnt {
+          background-color: #f5f5f5;
+          border-radius: 8px;
+        }
+
+        &__placeholder-wrap {
+          justify-content: center;
+        }
+
+        &__input {
+          font-size: 28px;
+          height: 64px;
+          padding: 0 16px;
+        }
+      }
+    }
+  }
+
+  .tabs {
+    flex: 1;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+
+    :global {
+      .at-tabs {
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+
+        &__header {
+          background-color: #fff;
+          position: sticky;
+          top: 0;
+          z-index: 99;
+          flex-shrink: 0;
+        }
+
+        &__item {
+          color: #666;
+          font-size: 28px;
+
+          &--active {
+            color: #f09c20;
+          }
+        }
+
+        &__underline {
+          width: 100%;
+          height: 4px;
+          background-color: #f09c20;
+          display: none !important; // TEMP 暂时隐藏
+        }
+
+        &__body {
+          flex: 1;
+          overflow: hidden; // TEMP ?
+          background-color: #f5f5f5;
+        }
+      }
+    }
+  }
+
+  .waterfall {
+    height: 100%;
+    padding: 12px;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    overflow-y: auto;
+
+    .column {
+      width: calc(50% - 6px);
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+  }
+
+  .card {
+    background-color: #fff;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+    transition: transform 0.2s ease;
+
+    &:active {
+      transform: scale(0.98);
+    }
+
+    .cover {
+      width: 100%;
+      height: 0;
+      padding-bottom: 100%;
+      position: relative;
+      background-color: #f0f0f0;
+
+      image {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+    }
+
+    .content {
+      padding: 12px;
+
+      .title {
+        font-size: 28px;
+        font-weight: 500;
+        color: #333;
+        line-height: 1.4;
+        margin-bottom: 8px;
+        display: -webkit-box;
+        -webkit-box-orient: vertical;
+        -webkit-line-clamp: 2;
+        overflow: hidden;
+      }
+
+      .desc {
+        font-size: 24px;
+        color: #666;
+        line-height: 1.4;
+        display: -webkit-box;
+        -webkit-box-orient: vertical;
+        -webkit-line-clamp: 2;
+        overflow: hidden;
+      }
+    }
+  }
+
+  .loading,
+  .noMore {
+    width: 100%;
+    padding: 24px 0;
+    text-align: center;
+    color: #999;
+    font-size: 24px;
+  }
+
+  .loading {
+    :global {
+      .at-activity-indicator {
+        justify-content: center;
+      }
+    }
+  }
+
+  .noMore {
+    color: #ccc;
   }
 }
 

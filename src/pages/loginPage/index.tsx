@@ -15,8 +15,8 @@ interface FormData {
 export default function LoginPage() {
   const { login, loading } = useUserStore();
   const [formData, setFormData] = useState<FormData>({
-    phone: "",
-    password: "",
+    phone: "18552276781",
+    password: "123456",
   });
   const [errors, setErrors] = useState<any>({
     phone: true,
@@ -70,11 +70,11 @@ export default function LoginPage() {
 
     try {
       await login(formData);
-      // Taro.navigateTo({
-      //   url: "/pages/index/index",
-      // });
+      Taro.navigateTo({
+        url: "/pages/index/index",
+      });
     } catch (error) {
-      console.error(error, "登录失败111");
+      console.error(error, "登录失败");
     }
   };
 

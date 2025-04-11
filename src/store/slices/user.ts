@@ -3,6 +3,10 @@ import { immer } from "zustand/middleware/immer";
 import Taro from "@tarojs/taro";
 import type { UserState, UserInfo, LoginParams } from "../types";
 import { getDB } from "@/services/cloud";
+import { encryptPassword } from "@/utils/crypto";
+
+// 持久化存储的key
+const STORAGE_KEY = "USER_INFO";
 
 export const useUserStore = create<UserState>()(
   immer((set, get) => ({
@@ -15,15 +19,31 @@ export const useUserStore = create<UserState>()(
         state.userInfo = userInfo;
         state.isLogin = true;
       });
+      // 持久化存储用户信息
+      Taro.setStorageSync(STORAGE_KEY, userInfo);
     },
 
+    // 检查登录状态
     checkLoginStatus: async () => {
       try {
-        // 获取云开发数据库实例
+        // 1. 先检查本地存储
+        const cachedUserInfo = Taro.getStorageSync(STORAGE_KEY);
+        if (!cachedUserInfo) {
+          return false;
+        }
+
+        // 2. 获取云开发数据库实例
         const db = getDB();
 
-        // 直接查询当前用户的数据（云开发会自动匹配 _openid）
-        const { data } = await db.collection("users").where({}).get();
+        // 3. 查询当前用户信息（云开发会自动匹配 _openid）
+        const { data } = await db
+          .collection("users")
+          .where({
+            _id: cachedUserInfo._id,
+          })
+          .get();
+
+        console.log(data, cachedUserInfo, "checkLoginStatus...");
 
         if (data.length > 0) {
           const userInfo = data[0] as UserInfo;
@@ -34,6 +54,8 @@ export const useUserStore = create<UserState>()(
           return true;
         }
 
+        // 如果数据库中找不到用户，清除本地存储
+        Taro.removeStorageSync(STORAGE_KEY);
         return false;
       } catch (error) {
         console.error("检查登录状态失败:", error);
@@ -41,19 +63,23 @@ export const useUserStore = create<UserState>()(
       }
     },
 
+    // 登录
     login: async (params: LoginParams) => {
       try {
         set((state) => {
           state.loading = true;
         });
 
-        // 获取微信登录凭证
-        await Taro.login(); // 确保登录态有效
+        // 1. 确保微信登录态有效(微信登录态有效期为7天)
+        await Taro.login();
 
-        // 获取云开发数据库实例
+        // 2. 获取云开发数据库实例
         const db = getDB();
 
-        // 查询用户是否已存在
+        // 3. 加密密码
+        const encryptedPassword = encryptPassword(params.password);
+
+        // 4. 查询用户是否已存在
         const { data } = await db
           .collection("users")
           .where({
@@ -69,59 +95,71 @@ export const useUserStore = create<UserState>()(
           const { _id } = await db.collection("users").add({
             data: {
               phone: params.phone,
-              password: params.password, // 实际项目中应该加密存储
-              // _openid: openid,
-              createTime: db.serverDate(),
+              password: encryptedPassword, // 加密密码
+              createTime: db.serverDate(), // 创建时间
+              updateTime: db.serverDate(), // 更新时间
             },
           });
 
           userInfo = {
             _id: _id as string,
             phone: params.phone,
-            password: params.password,
+            // password: params.password,
+            createTime: new Date(),
           };
         } else {
           // 已存在的用户，验证密码
           const existingUser = data[0] as UserInfo;
-          if (existingUser.password !== params.password) {
+          if (existingUser.password !== encryptedPassword) {
             Taro.showToast({
-              title: "密码错误",
+              title: "密码错误，请重试",
               icon: "none",
             });
-            throw new Error("密码错误");
+            set((state) => {
+              state.isLogin = false;
+              state.loading = false;
+            });
+
+            return;
           }
           userInfo = existingUser;
         }
 
-        console.log(data, userInfo, "login-userinfo...");
+        // console.log(data, userInfo, "login-userinfo...");
 
+        // 5. 更新状态并持久化存储
         set((state) => {
           state.userInfo = userInfo;
           state.isLogin = true;
           state.loading = false;
         });
+        Taro.setStorageSync(STORAGE_KEY, userInfo);
 
         Taro.showToast({
           title: "登录成功",
           icon: "success",
         });
       } catch (error) {
-        Taro.showToast({
-          title: "登录失败",
-          icon: "none",
-        });
         console.error("登录失败:", error);
         set((state) => {
           state.loading = false;
         });
+
+        Taro.showToast({
+          title: "登录失败，请重试",
+          icon: "none",
+        });
       }
     },
 
+    // 登出
     logout: () => {
       set((state) => {
         state.userInfo = null;
         state.isLogin = false;
       });
+      // 清除持久化存储
+      Taro.removeStorageSync(STORAGE_KEY);
     },
   })),
 );

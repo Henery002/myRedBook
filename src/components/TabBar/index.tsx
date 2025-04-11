@@ -13,7 +13,7 @@ const tabList = [
     iconType: "add",
   },
   {
-    title: "我的22",
+    title: "我的",
     iconType: "",
   },
 ];
