@@ -9,13 +9,14 @@ const App = (props: PropsWithChildren) => {
   const { initialized, initializeCloud } = useCloudStore();
 
   useEffect(() => {
-    if (!initialized) {
-      initializeCloud();
-    }
-  }, [initialized]);
+    //
+  }, []);
 
   useDidShow(() => {
     // 初始化逻辑
+    if (!initialized) {
+      initializeCloud();
+    }
   });
 
   useDidHide(() => {

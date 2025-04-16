@@ -65,7 +65,11 @@ function IndexPage() {
         <HomeContent />
       </View>
       {!userInfo?._id && <LoginBar />}
-      <TabBarComponent activeTab={activeTab} setActiveTab={handleTabChange} />
+      <TabBarComponent
+        activeTab={activeTab}
+        setActiveTab={handleTabChange}
+        userInfo={userInfo}
+      />
     </View>
   );
 }

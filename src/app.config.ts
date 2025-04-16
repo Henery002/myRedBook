@@ -3,6 +3,7 @@ export default defineAppConfig({
     "pages/index/index",
     "pages/publishPage/index",
     "pages/userPage/index",
+    "pages/loginPage/index",
   ],
   subPackages: [
     {

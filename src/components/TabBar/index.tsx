@@ -1,37 +1,38 @@
 import { View } from "@tarojs/components";
 import { AtTabBar } from "taro-ui";
-import "./index.less";
+import styles from "./index.less";
 
 interface Props {
   activeTab: number;
   setActiveTab: (index: number) => void;
+  userInfo: any;
 }
 
 const tablist = [
   {
     title: "首页",
-    iconType: "home",
+    iconType: "", //"home",
   },
   {
-    title: "发布",
+    title: "",
     iconType: "add",
   },
   {
     title: "我的",
-    iconType: "user",
+    iconType: "", //"user",
   },
 ];
 
 const TabBarComponent: React.FC<Props> = (props) => {
-  const { activeTab, setActiveTab } = props;
+  const { activeTab, setActiveTab, userInfo } = props;
 
   return (
-    <View className="tab-bar">
+    <View className={styles.tabBar}>
       <AtTabBar
         fixed
         color="#666"
         selectedColor="#f09c20"
-        tabList={tablist}
+        tabList={tablist.filter((v) => (userInfo?._id ? true : !!v.title))}
         current={activeTab}
         fontSize={16}
         onClick={setActiveTab}

@@ -44,7 +44,7 @@ export default function LoginBar() {
 
   const handleClick = () => {
     Taro.navigateTo({
-      url: "/packageB/pages/loginPage/index",
+      url: "/pages/loginPage/index",
     });
   };
 

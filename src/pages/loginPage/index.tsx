@@ -74,7 +74,7 @@ export default function LoginPage() {
       if (!!res) {
         Taro.navigateTo({
           // Taro.reLaunch({
-          url: "/packageB/pages/index/index",
+          url: "/pages/index/index",
         });
       }
     } catch (error) {

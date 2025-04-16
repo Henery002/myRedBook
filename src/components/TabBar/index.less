@@ -1,4 +1,4 @@
-.tab-bar {
+.tabBar {
   position: fixed;
   bottom: 0;
   left: 0;
@@ -8,13 +8,17 @@
   z-index: 10000;
 
   :global {
+    .at-tab-bar--fixed,
     .at-tab-bar {
       padding-bottom: constant(safe-area-inset-bottom);
       padding-bottom: env(safe-area-inset-bottom);
       box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.06);
 
+      height: 96px !important;
+      align-items: center;
+
       &__item {
-        padding: 16px;
+        padding: 0 16px;
         height: auto;
 
         &--active {
@@ -22,25 +26,24 @@
             color: #f09c20;
           }
         }
-      }
 
-      &__item:nth-child(2) {
+        // &:nth-child(2) {
+        // padding: 0;
+
         .at-tab-bar__icon {
-          background: linear-gradient(135deg, #ff6b6b 0%, #f09c20 100%);
-          border-radius: 50%;
-          width: 96px;
-          height: 96px;
-          line-height: 96px;
-          margin: 0;
+          margin-bottom: 0;
 
-          &::before {
-            color: #fff;
+          .at-icon-add {
+            font-size: 60px;
+            color: #fff !important;
+            font-weight: 400;
+            box-sizing: content-box;
+            padding: 6px 40px;
+            border-radius: 28px;
+            background-color: #f09c20;
           }
         }
-
-        .at-tab-bar__title {
-          display: none;
-        }
+        // }
       }
 
       &__icon {
