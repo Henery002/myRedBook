@@ -25,9 +25,9 @@ export interface UserState {
   isLogin: boolean;
   loading: boolean;
   setUserInfo: (userInfo: UserInfo) => void;
-  login: (params: LoginParams) => Promise<void>;
-  logout: () => void;
   checkLoginStatus: () => Promise<boolean>;
+  login: (params: LoginParams) => Promise<boolean>;
+  logout: () => void;
 }
 
 // 应用全局状态接口
@@ -44,4 +44,67 @@ export interface CloudState {
   error: string | null;
   initializeCloud: () => Promise<void>;
   resetError: () => void;
+}
+
+export interface Comment {
+  _id: string;
+  noteId: string;
+  content: string;
+  images?: string[];
+  author: {
+    _id: string;
+    nickname: string;
+    avatarUrl: string;
+  };
+  replyTo?: {
+    commentId: string;
+    userId: string;
+    nickname: string;
+  };
+  parentId?: string;
+  likes: number;
+  replies: number;
+  showReplies?: boolean;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export interface Note {
+  _id: string;
+  title: string;
+  content: string;
+  images: string[];
+  author: {
+    _id: string;
+    nickname: string;
+    avatarUrl: string;
+  };
+  location?: string;
+  likes: number;
+  collections: number;
+  comments: number;
+  createdAt: Date;
+  updatedAt: Date;
+  isLiked?: boolean;
+  isCollected?: boolean;
+}
+
+export interface NoteState {
+  notes: Note[];
+  currentNote: Note | null;
+  loading: boolean;
+  hasMore: boolean;
+  currentPage: number;
+  pageSize: number;
+
+  // 获取笔记列表
+  fetchNotes: (refresh?: boolean) => Promise<void>;
+  // 获取笔记详情
+  fetchNoteDetail: (noteId: string) => Promise<void>;
+  // 点赞笔记
+  likeNote: (noteId: string) => Promise<void>;
+  // 收藏笔记
+  collectNote: (noteId: string) => Promise<void>;
+  // 重置当前笔记
+  resetCurrentNote: () => void;
 }

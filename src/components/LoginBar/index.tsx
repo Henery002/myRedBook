@@ -1,5 +1,6 @@
 import { View, Text } from "@tarojs/components";
 import { useCallback, useEffect, useState } from "react";
+import { AtIcon } from "taro-ui";
 import Taro from "@tarojs/taro";
 import styles from "./index.less";
 
@@ -26,6 +27,7 @@ export default function LoginBar() {
 
   useEffect(() => {
     const page = Taro.getCurrentInstance().page;
+
     if (page) {
       page.onPageScroll = handleScroll;
     }
@@ -42,7 +44,7 @@ export default function LoginBar() {
 
   const handleClick = () => {
     Taro.navigateTo({
-      url: "/pages/loginPage/index",
+      url: "/packageB/pages/loginPage/index",
     });
   };
 
@@ -51,7 +53,10 @@ export default function LoginBar() {
       className={`${styles.loginBar} ${isVisible ? styles.visible : styles.hidden}`}
       onClick={handleClick}
     >
-      <Text className={styles.text}>登录发现更多精彩</Text>
+      <View className={styles.left}>
+        <AtIcon value="user" size="18" color="#333" />
+        <Text className={styles.text}>登录发现更多精彩</Text>
+      </View>
       <Text className={styles.action}>去登录</Text>
     </View>
   );

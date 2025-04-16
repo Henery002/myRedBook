@@ -1,0 +1,223 @@
+.homeContent {
+  // width: 100%;
+  // min-height: 100vh;
+  // background-color: #f5f5f5;
+  // padding: 16px;
+  // box-sizing: border-box;
+
+  .listPageWrapper {
+    width: 100%;
+    height: 100%;
+    background-color: #f5f5f5;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    overflow: hidden;
+
+    .searchBar {
+      padding: 16px;
+      background-color: #fff;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+
+      :global {
+        .at-search-bar {
+          padding: 0;
+          background-color: #f5f5f5;
+          border-radius: 8px;
+
+          &__input-cnt {
+            background-color: #f5f5f5;
+            border-radius: 8px;
+          }
+
+          &__placeholder-wrap {
+            justify-content: center;
+          }
+
+          &__input {
+            font-size: 28px;
+            height: 64px;
+            padding: 0 16px;
+          }
+        }
+      }
+    }
+
+    .tabs {
+      flex: 1;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+
+      :global {
+        .at-tabs {
+          height: 100%;
+          display: flex;
+          flex-direction: column;
+
+          &__header {
+            background-color: #fff;
+            position: sticky;
+            top: 0;
+            z-index: 99;
+            flex-shrink: 0;
+          }
+
+          &__item {
+            color: #666;
+            font-size: 28px;
+
+            &--active {
+              color: #f09c20;
+            }
+          }
+
+          &__underline {
+            width: 100% !important;
+            height: 4px;
+            background-color: #f09c20;
+          }
+
+          &__body {
+            flex: 1;
+            overflow: hidden;
+            overflow-y: auto;
+            background-color: #f5f5f5;
+          }
+        }
+      }
+    }
+
+    // 瀑布流组件
+    .waterfall {
+      width: 100%;
+      padding: 12px;
+      box-sizing: border-box;
+
+      // ---- 04.15 23:25 修改 ----
+      display: flex;
+      flex-direction: row;
+      // gap: 8px;
+      // ---- 04.15 23:25 修改 ----
+
+      .column {
+        // width: 100%;
+        // display: flex;
+        // flex-wrap: wrap;
+        // gap: 8px;
+
+        // css grid + 自动填充密度模式
+        // display: grid;
+        // grid-template-columns: repeat(2, 1fr);
+        // gap: 8px;
+        // align-items: start;
+
+        // 双列瀑布流布局方案最终决定放弃上述flex、grid布局，采用手动两列column的方式实现
+        width: calc(50% - 6px);
+        display: inline-block;
+
+        .card {
+          width: 100%;
+          // max-width: calc(50% - 4px);
+          height: max-content;
+          // flex: 1 1 50%;
+          background-color: #fff;
+          border-radius: 12px;
+          margin-bottom: 12px;
+          overflow: hidden;
+          box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+          transition: transform 0.2s ease;
+
+          &:active {
+            transform: scale(0.98);
+          }
+
+          .cover {
+            width: 100%;
+            position: relative;
+            background-color: #f0f0f0;
+            overflow: hidden;
+
+            image {
+              width: 100% !important;
+              // height: auto !important;
+              display: block;
+            }
+          }
+
+          .content {
+            padding: 12px;
+
+            .title {
+              font-size: 28px;
+              font-weight: 500;
+              color: #333;
+              line-height: 1.4;
+              margin-bottom: 8px;
+              display: -webkit-box;
+              -webkit-box-orient: vertical;
+              -webkit-line-clamp: 2;
+              overflow: hidden;
+            }
+
+            .desc {
+              font-size: 24px;
+              color: #666;
+              line-height: 1.4;
+              display: -webkit-box;
+              -webkit-box-orient: vertical;
+              -webkit-line-clamp: 2;
+              overflow: hidden;
+            }
+          }
+        }
+
+        &:nth-child(2n) {
+          margin-left: 12px;
+        }
+      }
+    }
+
+    .loading,
+    .noMore,
+    .empty {
+      width: 100%;
+      padding: 32px 0;
+      text-align: center;
+      font-size: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .loading {
+      color: #999;
+      :global {
+        .at-activity-indicator {
+          justify-content: center;
+        }
+      }
+    }
+
+    .noMore {
+      color: #ccc;
+    }
+
+    .empty {
+      color: #999;
+      min-height: 300px;
+      flex-direction: column;
+
+      &::before {
+        content: "";
+        width: 120px;
+        height: 120px;
+        margin-bottom: 16px;
+        background: #f5f5f5;
+        border-radius: 50%;
+      }
+    }
+  }
+}

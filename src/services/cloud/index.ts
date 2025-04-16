@@ -1,4 +1,5 @@
 import Taro from "@tarojs/taro";
+import { Note } from "@/types";
 
 // 云开发环境ID
 export const cloudEnvId = "cloud1-2gm986mx5cd74abe"; // 替换为你的云开发环境ID
@@ -25,3 +26,22 @@ export const getDB = () => {
 export const getStorage = () => {
   return Taro.cloud.storage();
 };
+
+export async function fetchNotes(page = 1, pageSize = 10): Promise<Note[]> {
+  try {
+    const db = Taro.cloud.database();
+    const notesCollection = db.collection("notes");
+
+    const skip = (page - 1) * pageSize;
+    const { data } = await notesCollection
+      .orderBy("createdAt", "desc")
+      .skip(skip)
+      .limit(pageSize)
+      .get();
+
+    return data as Note[];
+  } catch (error) {
+    console.error("Error fetching notes:", error);
+    throw error;
+  }
+}

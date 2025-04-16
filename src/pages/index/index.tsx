@@ -1,22 +1,21 @@
 import { View } from "@tarojs/components";
-import { useDidShow, useDidHide, navigateTo } from "@tarojs/taro";
-import { useEffect, useState } from "react";
+import { useDidShow, useDidHide } from "@tarojs/taro";
+import { useState } from "react";
+import Taro from "@tarojs/taro";
 import { AtActivityIndicator } from "taro-ui";
-import { useUserStore, useCloudStore } from "@/store";
+import { useUserStore } from "@/store";
 
 // 引入组件
-import TabBar from "@/components/TabBar";
+import TabBarComponent from "@/components/TabBar";
 import LoginBar from "@/components/LoginBar";
-import ListPage from "../ListPage";
-import UserPage from "../UserPage";
+import HomeContent from "@/components/PageContent/HomeContent";
 
 import styles from "./index.less";
 
-export default function IndexPage() {
-  const [activeTab, setActiveTab] = useState(0);
+function IndexPage() {
   const { userInfo, checkLoginStatus } = useUserStore();
-  const { initialized, initializeCloud } = useCloudStore();
   const [isCheckingLogin, setIsCheckingLogin] = useState(false);
+  const [activeTab, setActiveTab] = useState(0);
 
   // 检查登录状态
   const checkAuth = async () => {
@@ -28,14 +27,8 @@ export default function IndexPage() {
   // 每次页面显示时检查登录状态
   useDidShow(() => {
     checkAuth();
+    setActiveTab(0);
   });
-
-  // 初始化云开发
-  useEffect(() => {
-    if (!initialized) {
-      initializeCloud();
-    }
-  }, [initialized]);
 
   useDidHide(() => {
     // 清理逻辑
@@ -43,19 +36,38 @@ export default function IndexPage() {
 
   // 如果正在检查登录状态，可以显示加载状态
   if (isCheckingLogin) {
-    return <AtActivityIndicator mode="center" content="加载中..." />;
+    return <AtActivityIndicator mode="center" content="" color="#f09c20" />;
   }
 
-  console.log(userInfo?._id, "初始化...");
+  // 处理标签页切换
+  const handleTabChange = (index: number) => {
+    if (index === 1) {
+      Taro.navigateTo({
+        url: "/pages/publishPage/index",
+      });
+      return;
+    }
+    if (index === 2) {
+      Taro.navigateTo({
+        url: "/pages/userPage/index",
+      });
+      return;
+    }
+    setActiveTab(index);
+  };
+
+  // console.log(userInfo?._id, "初始化...");
 
   // 已登录时显示主内容
   return (
     <View className={styles.BasicLayoutWrapper}>
       <View className={styles.mainContentWrapper}>
-        {activeTab === 0 ? <ListPage /> : <UserPage />}
+        <HomeContent />
       </View>
       {!userInfo?._id && <LoginBar />}
-      <TabBar activeTab={activeTab} setActiveTab={setActiveTab} />
+      <TabBarComponent activeTab={activeTab} setActiveTab={handleTabChange} />
     </View>
   );
 }
+
+export default IndexPage;

@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import Taro from "@tarojs/taro";
-import { View, Image, Text } from "@tarojs/components";
+import { View, Image } from "@tarojs/components";
 import { AtNavBar, AtButton, AtForm, AtInput, AtCheckbox } from "taro-ui";
 
 import { useUserStore } from "@/store";
@@ -55,7 +55,7 @@ export default function LoginPage() {
     setAgreeProtocal((prev) => !prev);
   };
 
-  const handleWechatLogin = async () => {
+  const handleLogin = async () => {
     if (!agreeProtocal) {
       Taro.showToast({
         title: "请先同意用户协议",
@@ -69,10 +69,14 @@ export default function LoginPage() {
     }
 
     try {
-      await login(formData);
-      Taro.navigateTo({
-        url: "/pages/index/index",
-      });
+      const res = await login(formData);
+
+      if (!!res) {
+        Taro.navigateTo({
+          // Taro.reLaunch({
+          url: "/packageB/pages/index/index",
+        });
+      }
     } catch (error) {
       console.error(error, "登录失败");
     }
@@ -120,7 +124,7 @@ export default function LoginPage() {
             type="primary"
             loading={loading}
             disabled={disabled}
-            onClick={handleWechatLogin}
+            onClick={handleLogin}
           >
             登录
           </AtButton>
