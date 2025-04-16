@@ -61,21 +61,21 @@ const HomeContent: React.FC = () => {
   ];
 
   const renderWaterfall = () => {
-    if (loading) {
+    if (loading && !notes.length) {
       return (
-        <>
+        <View className={styles.waterfallWrapper}>
           <View className={styles.column}>
             <Skeleton loading={true} row={3} />
           </View>
           <View className={styles.column}>
             <Skeleton loading={true} row={3} />
           </View>
-        </>
+        </View>
       );
     }
 
     return (
-      <>
+      <View className={styles.waterfallWrapper}>
         <View className={styles.column}>
           {notes
             .filter((_, i) => i % 2 === 0)
@@ -95,7 +95,7 @@ const HomeContent: React.FC = () => {
               </View>
             ))}
         </View>
-        <View className={styles.column} style={{ position: "absolute" }}>
+        <View className={styles.column}>
           {notes
             .filter((_, i) => i % 2 === 1)
             .map((item) => (
@@ -114,7 +114,7 @@ const HomeContent: React.FC = () => {
               </View>
             ))}
         </View>
-      </>
+      </View>
     );
   };
 
@@ -136,28 +136,22 @@ const HomeContent: React.FC = () => {
             onClick={handleTabClick}
             swipeable={false}
           >
-            {tabList.map((v) => (
-              <AtTabsPane current={current} index={0}>
+            {tabList.map((_, index) => (
+              <AtTabsPane current={current} index={index} key={index}>
                 <ScrollView
-                  // className={styles.contentWrapper}
-                  className={styles.waterfall}
+                  className={styles.scrollView}
                   scrollY
                   scrollWithAnimation
                   enableBackToTop
-                  // refresherEnabled
-                  // refresherTriggered={loading}
+                  refresherEnabled
+                  refresherTriggered={loading}
                   onRefresherRefresh={() => {
-                    // fetchNotes(true);
+                    fetchNotes(true);
                   }}
-                  // onScrollToLower={handleLoadMore}
-                  // lowerThreshold={100}
+                  onScrollToLower={handleLoadMore}
+                  lowerThreshold={100}
                 >
                   {renderWaterfall()}
-                  {loading && !notes.length && (
-                    <View className={styles.loading}>
-                      <AtActivityIndicator content="加载中..." />
-                    </View>
-                  )}
                   {loading && notes.length > 0 && (
                     <View className={styles.loading}>
                       <AtActivityIndicator content="加载更多..." />
