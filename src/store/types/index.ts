@@ -77,14 +77,23 @@ export interface Note {
   author: {
     _id: string;
     nickname: string;
+    phone: string;
     avatarUrl: string;
   };
-  location?: string;
+  location?: {
+    address: string;
+    name: string;
+    province: string;
+    city: string;
+    district: string;
+    latitude: number;
+    longitude: number;
+  };
   likes: number;
   collections: number;
   comments: number;
-  createdAt: Date;
-  updatedAt: Date;
+  createTime: Date;
+  updateTime: Date;
   isLiked?: boolean;
   isCollected?: boolean;
 }

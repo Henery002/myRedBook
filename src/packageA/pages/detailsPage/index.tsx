@@ -1,8 +1,9 @@
 import { View, Text, Image } from "@tarojs/components";
 import { useEffect, useState } from "react";
-import { AtIcon } from "taro-ui";
+import { AtIcon, AtActivityIndicator } from "taro-ui";
 import Taro from "@tarojs/taro";
 import { useUserStore, useNoteStore } from "@/store";
+import { formatTime, formatLikes } from "@/utils/format";
 import CommentSection from "@/components/CommentSection";
 import styles from "./index.less";
 
@@ -52,21 +53,22 @@ const DetailsPage = () => {
 
   const handleLogin = () => {
     Taro.navigateTo({
-      url: "/packageB/pages/loginPage/index",
+      url: "/pages/loginPage/index",
     });
   };
 
   if (loading || !currentNote) {
     return (
       <View className={styles.loading}>
-        <Text>加载中...</Text>
+        <AtActivityIndicator mode="center" content="加载中..." />
       </View>
     );
   }
 
+  console.log(loading, currentNote, "detailsPage...");
+
   return (
     <View className={styles.detailsWrapper}>
-      {/* 文章内容 */}
       <View className={styles.content}>
         <View className={styles.header}>
           <View className={styles.userInfo}>
@@ -101,12 +103,18 @@ const DetailsPage = () => {
             <Text>{currentNote.content}</Text>
           </View>
           <View className={styles.time}>
-            <Text>
-              <Text>{new Date(currentNote.createdAt).toLocaleString()}</Text>
+            <View className={styles.timeItem}>
+              <AtIcon value="clock" size="14" color="#999" />
+              <Text>{formatTime(currentNote.createTime)}</Text>
+            </View>
+            <View className={styles.timeItem}>
+              <AtIcon value="map-pin" size="14" color="#999" />
               {currentNote.location && (
-                <Text className={styles.address}>{currentNote.location}</Text>
+                <Text className={styles.address}>
+                  {currentNote.location?.name}
+                </Text>
               )}
-            </Text>
+            </View>
           </View>
         </View>
 
@@ -117,7 +125,9 @@ const DetailsPage = () => {
               size="18"
               color={currentNote.isLiked ? "#ff2442" : "#666"}
             />
-            <Text className={styles.count}>{currentNote.likes}</Text>
+            <Text className={styles.count}>
+              {formatLikes(currentNote.likes)}
+            </Text>
           </View>
           <View className={styles.interactionItem} onClick={handleCollect}>
             <AtIcon
@@ -125,7 +135,9 @@ const DetailsPage = () => {
               size="18"
               color={currentNote.isCollected ? "#ff2442" : "#666"}
             />
-            <Text className={styles.count}>{currentNote.collections}</Text>
+            <Text className={styles.count}>
+              {formatLikes(currentNote.collections)}
+            </Text>
           </View>
           <View className={styles.interactionItem} onClick={handleShare}>
             <AtIcon value="share" size="18" color="#666" />
@@ -137,7 +149,7 @@ const DetailsPage = () => {
       {/* 评论区 */}
       {!userInfo?._id ? (
         <View className={styles.loginPrompt} onClick={handleLogin}>
-          <Text className={styles.loginText}>登录后查看评论</Text>
+          <View className={styles.loginText}>登录后查看评论</View>
         </View>
       ) : (
         noteId && <CommentSection noteId={noteId} />

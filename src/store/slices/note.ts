@@ -4,6 +4,9 @@ import Taro from "@tarojs/taro";
 import type { NoteState, Note } from "../types";
 import { getDB } from "@/services/cloud";
 
+const AVATAR_URL = ""; //"https://placeholder.com/50";
+const DEFAULT_NICKNAME = "somebody";
+
 export const useNoteStore = create<NoteState>()(
   immer((set, get) => ({
     notes: [],
@@ -15,7 +18,7 @@ export const useNoteStore = create<NoteState>()(
 
     fetchNotes: async (refresh = false) => {
       const { currentPage, pageSize, notes } = get();
-      console.log(notes, "fetchNotes...");
+      // console.log(notes, "fetchNotes...");
 
       if (refresh) {
         set((state) => {
@@ -84,8 +87,8 @@ export const useNoteStore = create<NoteState>()(
               ...note,
               author: {
                 _id: author?._id || note._openid,
-                nickname: author?.nickName || "小黄薯",
-                avatarUrl: author?.avatarUrl || "https://placeholder.com/50",
+                nickname: author?.nickName || author?.phone,
+                avatarUrl: author?.avatarUrl || AVATAR_URL,
               },
               isLiked,
               isCollected,
@@ -174,8 +177,8 @@ export const useNoteStore = create<NoteState>()(
           ...note,
           author: {
             _id: author?._id || note._openid,
-            nickname: author?.nickName || "小黄薯",
-            avatarUrl: author?.avatarUrl || "https://placeholder.com/50",
+            nickname: author?.nickName || author?.phone,
+            avatarUrl: author?.avatarUrl || AVATAR_URL,
           },
           isLiked,
           isCollected,

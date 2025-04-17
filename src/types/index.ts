@@ -7,6 +7,7 @@ export interface Note {
     _id: string;
     avatarUrl: string;
     nickName: string;
+    phone?: string;
   };
   location?: {
     name: string;

@@ -1,7 +1,14 @@
 import { View, Text, Image, ScrollView } from "@tarojs/components";
 import { useEffect, useState, useCallback } from "react";
 import Skeleton from "@/components/Skeleton";
-import { AtSearchBar, AtTabs, AtTabsPane, AtActivityIndicator } from "taro-ui";
+import {
+  AtSearchBar,
+  AtTabs,
+  AtTabsPane,
+  AtActivityIndicator,
+  AtIcon,
+} from "taro-ui";
+import { formatLikes } from "@/utils/format";
 import Taro from "@tarojs/taro";
 import { useNoteStore } from "@/store";
 import styles from "./index.less";
@@ -90,7 +97,22 @@ const HomeContent: React.FC = () => {
                 </View>
                 <View className={styles.content}>
                   <View className={styles.title}>{item.title}</View>
-                  <View className={styles.desc}>{item.content}</View>
+                  <View className={styles.userInfo}>
+                    <View className={styles.userInfoItem}>
+                      <Image
+                        src={item.author.avatarUrl}
+                        mode="widthFix"
+                        lazyLoad
+                      />
+                      <View className={styles.userName}>
+                        {item.author?.nickname || item.author?.phone}
+                      </View>
+                    </View>
+                    <View className={styles.actionItem}>
+                      <AtIcon color="#999" value="heart" size="16" />
+                      <View className={styles.likes}>{item.likes}</View>
+                    </View>
+                  </View>
                 </View>
               </View>
             ))}
@@ -109,7 +131,28 @@ const HomeContent: React.FC = () => {
                 </View>
                 <View className={styles.content}>
                   <View className={styles.title}>{item.title}</View>
-                  <View className={styles.desc}>{item.content}</View>
+                  <View className={styles.userInfo}>
+                    <View className={styles.userInfoItem}>
+                      <Image
+                        src={item.author.avatarUrl}
+                        mode="widthFix"
+                        lazyLoad
+                      />
+                      <View className={styles.userName}>
+                        {item.author?.nickname || item.author?.phone}
+                      </View>
+                    </View>
+                    <View className={styles.actionItem}>
+                      <AtIcon
+                        color="#999"
+                        value={item.isLiked ? "heart-2" : "heart"}
+                        size="16"
+                      />
+                      <View className={styles.likes}>
+                        {formatLikes(item.likes)}
+                      </View>
+                    </View>
+                  </View>
                 </View>
               </View>
             ))}
@@ -121,7 +164,6 @@ const HomeContent: React.FC = () => {
   return (
     <View className={styles.homeContent}>
       <View className={styles.listPageWrapper}>
-        {/* 搜索栏 */}
         <AtSearchBar
           value={searchValue}
           onChange={handleSearch}

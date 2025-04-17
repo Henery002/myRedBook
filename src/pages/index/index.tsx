@@ -56,8 +56,6 @@ function IndexPage() {
     setActiveTab(index);
   };
 
-  // console.log(userInfo?._id, "初始化...");
-
   // 已登录时显示主内容
   return (
     <View className={styles.BasicLayoutWrapper}>

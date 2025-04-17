@@ -64,13 +64,13 @@
       .title {
         font-size: 32px;
         font-weight: 500;
-        color: #333333;
+        color: #333;
         line-height: 1.4;
         margin-bottom: 24px;
       }
 
       .description {
-        font-size: 28px;
+        font-size: 30px;
         color: #666;
         line-height: 1.4;
         margin-bottom: 24px;
@@ -81,8 +81,15 @@
         color: #999999;
         margin-bottom: 24px;
 
-        .address {
-          margin-left: 16px;
+        .timeItem {
+          margin-right: 16px;
+          display: inline;
+
+          :global {
+            .at-icon {
+              margin-right: 8px;
+            }
+          }
         }
       }
     }
@@ -171,26 +178,26 @@
         }
       }
     }
+  }
 
-    .loginPrompt {
-      margin: 24px 0;
-      padding: 16px 0;
-      border: 2px solid #f09c20;
-      border-radius: 36px;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      background-color: #ffffff;
-      transition: all 0.3s ease;
+  .loginPrompt {
+    margin: 24px 0;
+    padding: 16px 0;
+    border: 2px solid #f09c20;
+    border-radius: 36px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #ffffff;
+    transition: all 0.3s ease;
 
-      &:active {
-        background-color: #f8f8f8;
-      }
+    &:active {
+      background-color: #f8f8f8;
+    }
 
-      .loginText {
-        font-size: 28px;
-        color: #f09c20;
-      }
+    .loginText {
+      font-size: 28px;
+      color: #f09c20;
     }
   }
 }
