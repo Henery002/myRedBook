@@ -98,7 +98,7 @@ export default function LoginPage() {
         <Image
           className={styles.loginImage}
           src={require("@/assets/images/logo.png")}
-          mode="aspectFit"
+          mode="widthFix"
         />
 
         <AtForm className={styles.loginForm}>

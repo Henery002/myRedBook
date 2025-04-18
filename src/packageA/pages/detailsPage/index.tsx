@@ -127,7 +127,7 @@ const DetailsPage = () => {
                     <Image
                       className={styles.imageItem}
                       src={image}
-                      mode="aspectFill"
+                      mode="aspectFit"
                       onClick={() => handleImageClick(index)}
                     />
                   </SwiperItem>

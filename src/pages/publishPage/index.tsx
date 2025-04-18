@@ -185,9 +185,9 @@ export default function PublishPage() {
         {images.map((image, index) => (
           <View key={image} className={styles.imageItem}>
             <Image
-              className={styles.previewImage}
               src={image}
               mode="aspectFill"
+              className={styles.previewImage}
             />
             <View
               className={styles.deleteBtn}

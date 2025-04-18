@@ -14,7 +14,7 @@ export default defineAppConfig({
   window: {
     backgroundTextStyle: "light",
     navigationBarBackgroundColor: "#fff",
-    navigationBarTitleText: "WeChat",
+    navigationBarTitleText: "小黄书",
     navigationBarTextStyle: "black",
   },
   // 优化配置分包预加载规则

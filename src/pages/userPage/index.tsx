@@ -50,15 +50,13 @@ const UserPage = () => {
       <View className={styles.userHeader}>
         <View className={styles.userInfo}>
           <Image
+            mode="aspectFill"
             className={styles.avatar}
             src={userInfo?.avatarUrl || "https://placeholder.com/150"}
-            mode="aspectFill"
           />
           <View className={styles.userMeta}>
-            <Text className={styles.nickname}>
-              {userInfo?.nickname || "小红薯66005029"}
-            </Text>
-            <Text className={styles.redBookId}>小红书号 11881124302</Text>
+            <Text className={styles.nickname}>{userInfo?.nickname}</Text>
+            <Text className={styles.redBookId}>小黄书id 11881124302</Text>
           </View>
         </View>
         <View className={styles.settingBtn} onClick={handleSettingClick}>

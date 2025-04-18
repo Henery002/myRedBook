@@ -99,11 +99,7 @@ const HomeContent: React.FC = () => {
                   <View className={styles.title}>{item.title}</View>
                   <View className={styles.userInfo}>
                     <View className={styles.userInfoItem}>
-                      <Image
-                        src={item.author.avatarUrl}
-                        mode="widthFix"
-                        lazyLoad
-                      />
+                      <Image src={item.author.avatarUrl} mode="aspectFill" />
                       <View className={styles.userName}>
                         {item.author?.nickname || item.author?.phone}
                       </View>
@@ -133,11 +129,7 @@ const HomeContent: React.FC = () => {
                   <View className={styles.title}>{item.title}</View>
                   <View className={styles.userInfo}>
                     <View className={styles.userInfoItem}>
-                      <Image
-                        src={item.author.avatarUrl}
-                        mode="widthFix"
-                        lazyLoad
-                      />
+                      <Image src={item.author.avatarUrl} mode="aspectFill" />
                       <View className={styles.userName}>
                         {item.author?.nickname || item.author?.phone}
                       </View>

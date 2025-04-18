@@ -170,7 +170,12 @@ export default function CommentSection({ noteId }: Props) {
   const renderCommentReplyItem = useCallback((reply: Comment) => {
     return (
       <View className={styles.commentReply}>
-        <Image className={styles.avatar} src={reply.avatar} mode="widthFix" />
+        <Image
+          className={styles.avatar}
+          src={reply.avatar}
+          mode="aspectFill"
+          lazyLoad
+        />
         <View className={styles.replyContent}>
           <View className={styles.headerLeft}>
             <View className={styles.header}>
@@ -204,7 +209,12 @@ export default function CommentSection({ noteId }: Props) {
   const renderCommentItem = useCallback((comment: Comment, isReply = false) => {
     return (
       <View className={styles.commentItem} key={comment._id}>
-        <Image className={styles.avatar} src={comment.avatar} mode="widthFix" />
+        <Image
+          className={styles.avatar}
+          src={comment.avatar}
+          mode="aspectFill"
+          lazyLoad
+        />
         <View className={styles.commentContent}>
           <View className={styles.commentSelfHeader}>
             <View className={styles.headerLeft}>
@@ -249,7 +259,7 @@ export default function CommentSection({ noteId }: Props) {
                   key={index}
                   className={styles.commentImage}
                   src={image}
-                  mode="aspectFill"
+                  mode="widthFix"
                 />
               ))}
             </View>
