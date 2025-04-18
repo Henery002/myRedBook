@@ -1,140 +1,34 @@
 .commentSection {
-  background: #fff;
-  min-height: 100vh;
   display: flex;
   flex-direction: column;
+  background: #fff;
+  position: relative;
+  height: 100vh;
 
-  .commentHeader {
-    padding: 24px 32px;
-    border-bottom: 1px solid #f5f5f5;
+  .commentTopHeader {
+    padding: 12px 24px;
 
     .commentCount {
       font-size: 28px;
+      font-weight: 300;
       color: #333;
-      font-weight: 500;
-    }
-  }
-
-  .commentList {
-    flex: 1;
-    padding: 0 32px;
-  }
-
-  .commentItem {
-    display: flex;
-    padding: 24px 0;
-    border-bottom: 1px solid #f5f5f5;
-
-    &.replyItem {
-      padding-left: 60px;
-      background: #f8f8f8;
-      margin: 12px 0;
-      border-radius: 8px;
-    }
-
-    .avatar {
-      width: 64px;
-      height: 64px;
-      border-radius: 50%;
-      margin-right: 16px;
-    }
-
-    .commentContent {
-      flex: 1;
-
-      .commentHeader {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        padding: 0;
-        border: none;
-        margin-bottom: 8px;
-
-        .nickname {
-          font-size: 28px;
-          color: #333;
-          font-weight: 500;
-        }
-
-        .time {
-          font-size: 24px;
-          color: #999;
-        }
-      }
-
-      .commentText {
-        font-size: 28px;
-        color: #333;
-        line-height: 1.5;
-        margin-bottom: 16px;
-      }
-
-      .imageList {
-        display: flex;
-        flex-wrap: wrap;
-        margin: 0 -8px;
-
-        .commentImage {
-          width: 180px;
-          height: 180px;
-          margin: 8px;
-          border-radius: 8px;
-          background: #f5f5f5;
-        }
-      }
-
-      .commentFooter {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        margin-top: 16px;
-
-        .commentActions {
-          display: flex;
-          align-items: center;
-
-          .actionItem {
-            display: flex;
-            align-items: center;
-            margin-right: 32px;
-            font-size: 24px;
-            color: #999;
-
-            .at-icon {
-              margin-right: 8px;
-            }
-          }
-        }
-
-        .showReplies {
-          font-size: 24px;
-          color: #666;
-        }
-      }
     }
   }
 
   .commentBox {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    background: #fff;
-    padding: 24px 32px;
-    box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.05);
+    padding: 12px 24px 12px 24px;
 
     .inputWrapper {
       display: flex;
       align-items: center;
       background: #f5f5f5;
       border-radius: 36px;
-      padding: 12px 24px;
 
       .commentInput {
+        font-size: 24px;
+        color: #666;
+        padding: 16px 32px;
         flex: 1;
-        height: 72px;
-        font-size: 28px;
-        background: transparent;
       }
 
       .inputActions {
@@ -142,56 +36,415 @@
         align-items: center;
 
         .actionItem {
-          padding: 12px;
-          margin-left: 8px;
-        }
-      }
-    }
-
-    .selectedImages {
-      display: flex;
-      flex-wrap: wrap;
-      margin: 16px -8px 0;
-
-      .imageItem {
-        position: relative;
-        width: 120px;
-        height: 120px;
-        margin: 8px;
-
-        .preview {
-          width: 100%;
-          height: 100%;
-          border-radius: 8px;
-          background: #f5f5f5;
-        }
-
-        .deleteBtn {
-          position: absolute;
-          top: -12px;
-          right: -12px;
-          width: 36px;
-          height: 36px;
-          background: rgba(0, 0, 0, 0.5);
-          border-radius: 50%;
           display: flex;
           align-items: center;
-          justify-content: center;
+          margin-right: 24px;
+          color: #999;
+          font-size: 24px;
+
+          &:last-child {
+            // margin-right: 0;
+          }
         }
       }
     }
   }
 
-  .loading {
-    text-align: center;
-    padding: 24px;
-    color: #999;
-    font-size: 24px;
+  // 评论区评论列表（嵌套）
+  .commentList {
+    box-sizing: border-box;
+    padding: 12px 24px;
+    flex: 1;
+
+    .commentItem {
+      display: flex;
+      margin-bottom: 24px;
+
+      &:last-child {
+        margin-bottom: 0;
+      }
+
+      .avatar {
+        width: 64px;
+        height: 64px;
+        border-radius: 50%;
+        margin-right: 16px;
+        background: #f5f5f5;
+      }
+
+      // 每一大条评论体
+      .commentContent {
+        margin-bottom: 36px;
+
+        // 11111
+        .commentSelfHeader {
+          margin-bottom: 24px;
+          display: flex;
+          align-items: flex-start;
+          justify-content: space-between;
+          gap: 24px;
+
+          .headerLeft {
+            .header {
+              .nickname {
+                font-size: 28px;
+                font-weight: 300;
+                color: #666;
+                margin-right: 16px;
+              }
+            }
+
+            .text {
+              font-size: 28px;
+              color: #444;
+              line-height: 1.5;
+              margin-right: 16px;
+              margin-bottom: 16px;
+            }
+
+            .textSuffix {
+              display: inline-flex;
+
+              .suffixTime {
+                font-size: 24px;
+                color: #999;
+                margin-right: 8px;
+              }
+
+              .suffixAddress {
+                font-size: 24px;
+                color: #999;
+                margin-right: 12px;
+              }
+
+              .suffixReply {
+                font-size: 26px;
+                color: #777;
+              }
+            }
+          }
+
+          .actionItem {
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+
+            .at-icon {
+              font-size: 28px;
+              color: #666;
+            }
+
+            .text {
+              font-size: 24px;
+              color: #666;
+            }
+          }
+        }
+
+        .commentReplyList {
+          display: flex;
+          flex-direction: column;
+          gap: 24px;
+
+          // 11111
+          .commentReply {
+            display: flex;
+
+            .avatar {
+              width: 64px;
+              height: 64px;
+              border-radius: 50%;
+              margin-right: 16px;
+              background: #f5f5f5;
+            }
+
+            .replyContent {
+              display: flex;
+              flex: 1;
+              align-items: flex-start;
+              justify-content: space-between;
+              gap: 24px;
+
+              .headerLeft {
+                flex: 1;
+
+                .header {
+                  .nickname {
+                    font-size: 28px;
+                    font-weight: 300;
+                    color: #666;
+                    margin-right: 16px;
+                  }
+                }
+              }
+
+              .text {
+                font-size: 28px;
+                color: #444;
+                line-height: 1.5;
+                margin-right: 16px;
+                margin-bottom: 12px;
+              }
+
+              .textSuffix {
+                display: inline-flex;
+
+                .suffixTime {
+                  font-size: 24px;
+                  color: #999;
+                  margin-right: 8px;
+                }
+
+                .suffixAddress {
+                  font-size: 24px;
+                  color: #999;
+                  margin-right: 12px;
+                }
+
+                .suffixReply {
+                  font-size: 26px;
+                  color: #777;
+                }
+              }
+
+              .actionItem {
+                display: flex;
+                flex-direction: column;
+                justify-content: flex-end;
+
+                .at-icon {
+                  font-size: 28px;
+                  color: #666;
+                }
+
+                .text {
+                  font-size: 24px;
+                  color: #666;
+                }
+              }
+            }
+          }
+        }
+
+        .commentHeader {
+          display: flex;
+          align-items: center;
+          margin-bottom: 8px;
+
+          .nickname {
+            font-size: 26px;
+            font-weight: 300;
+            color: #666;
+            margin-right: 16px;
+          }
+
+          .time {
+            font-size: 24px;
+            color: #999;
+          }
+        }
+
+        .commentText {
+          font-size: 24px;
+          color: #666;
+          line-height: 1.5;
+          margin-bottom: 16px;
+        }
+
+        .imageList {
+          display: flex;
+          flex-wrap: wrap;
+          margin: 0 -8px 16px;
+
+          .commentImage {
+            width: 200px;
+            height: 200px;
+            margin: 8px;
+            border-radius: 8px;
+          }
+        }
+
+        // ----- 废弃 -----
+        .commentFooter {
+          display: inline-flex;
+          justify-content: space-between;
+          align-items: center;
+
+          .commentActions {
+            display: flex;
+            align-items: center;
+
+            .actionItem {
+            }
+          }
+
+          .showReplies {
+            font-size: 24px;
+            color: #666;
+          }
+        }
+
+        .replyList {
+          margin-top: 16px;
+          padding-left: 80px;
+          border-left: 2px solid #f5f5f5;
+        }
+      }
+    }
+
+    .loading {
+      text-align: center;
+      padding: 24px;
+      color: #999;
+      font-size: 24px;
+    }
+  }
+
+  .mask {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.3);
+    z-index: 99999;
+    opacity: 1;
+    transition: opacity 0.2s ease-out;
+  }
+
+  .commentPanelWrapper {
+    background: #fff;
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    transform: translateY(100%);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    z-index: 100000;
+    box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.18);
+
+    &.show {
+      transform: translateY(0);
+      & + .mask {
+        opacity: 1;
+      }
+    }
+
+    .panelContent {
+      background: #fff;
+      border-radius: 24px 24px 0 0;
+      padding: 16px 24px;
+      // min-height: 200px;
+      display: flex;
+      flex-direction: column;
+
+      .textareaWrapper {
+        flex: 1;
+        margin-bottom: 12px;
+
+        .textarea {
+          width: 100%;
+          min-height: 120px;
+          font-size: 28px;
+          line-height: 1.5;
+          padding: 16px;
+          background: #f5f5f5;
+          border-radius: 24px;
+          box-sizing: border-box;
+          color: #666;
+          transition: background-color 0.3s ease;
+
+          &:focus {
+            background: #f0f0f0;
+          }
+        }
+      }
+
+      .panelFooter {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 12px 8px 0 8px;
+
+        .toolbar {
+          display: flex;
+          gap: 32px;
+
+          .toolbarItem {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 48px;
+            height: 48px;
+            color: #666;
+            transition: all 0.2s ease;
+
+            &:active {
+              opacity: 0.7;
+              transform: scale(0.95);
+            }
+          }
+        }
+
+        .sendButton {
+          padding: 16px 48px;
+          border-radius: 32px;
+          font-size: 28px;
+          color: #fff;
+          background: #ccc;
+          transition: all 0.3s ease;
+
+          &.active {
+            background: #f09c20;
+            // box-shadow: 0 4px 12px rgba(240, 156, 32, 0.3);
+          }
+
+          &:active {
+            opacity: 0.8;
+            transform: scale(0.98);
+          }
+        }
+      }
+    }
   }
 }
 
+.selectedImages {
+  display: flex;
+  flex-wrap: wrap;
+  margin-top: 16px;
+}
+
+.imageItem {
+  position: relative;
+  width: 160px;
+  height: 160px;
+  margin-right: 16px;
+  margin-bottom: 16px;
+}
+
+.preview {
+  width: 100%;
+  height: 100%;
+  border-radius: 8px;
+}
+
+.deleteBtn {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 40px;
+  height: 40px;
+  background: rgba(0, 0, 0, 0.5);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
 .emojiPanel {
-  padding: 24px;
-  background: #fff;
-  border-top: 1px solid #f5f5f5;
+  margin-top: 16px;
+  padding: 16px;
+  background: #f5f5f5;
+  border-radius: 8px;
 }

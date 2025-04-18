@@ -150,12 +150,15 @@ const ListPage = () => {
                 {renderWaterfall()}
                 {loading && !notes.length && (
                   <View className={styles.loading}>
-                    <AtActivityIndicator content="加载中..." />
+                    <AtActivityIndicator content="加载中..." color="#f09c20" />
                   </View>
                 )}
                 {loading && notes.length > 0 && (
                   <View className={styles.loading}>
-                    <AtActivityIndicator content="加载更多..." />
+                    <AtActivityIndicator
+                      content="加载更多..."
+                      color="#f09c20"
+                    />
                   </View>
                 )}
                 {!loading && !hasMore && notes.length > 0 && (

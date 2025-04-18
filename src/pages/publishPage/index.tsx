@@ -133,10 +133,10 @@ export default function PublishPage() {
           images,
           location: location
             ? {
-                name: location.name,
-                address: location.address,
-                latitude: location.latitude,
-                longitude: location.longitude,
+                name: location?.name || "未知",
+                address: location?.address || "未知",
+                latitude: location?.latitude || 0,
+                longitude: location?.longitude || 0,
               }
             : null,
           author: {
@@ -181,10 +181,6 @@ export default function PublishPage() {
 
   return (
     <View className={styles.publishPage}>
-      {/* <View className={styles.backIcon} onClick={handleBack}>
-        <AtIcon value="chevron-left" size="24" />
-      </View> */}
-
       <View className={styles.imageUploadSection}>
         {images.map((image, index) => (
           <View key={image} className={styles.imageItem}>

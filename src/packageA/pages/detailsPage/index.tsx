@@ -1,10 +1,11 @@
-import { View, Text, Image } from "@tarojs/components";
+import { View, Text, Image, Swiper, SwiperItem } from "@tarojs/components";
 import { useEffect, useState } from "react";
 import { AtIcon, AtActivityIndicator } from "taro-ui";
 import Taro from "@tarojs/taro";
 import { useUserStore, useNoteStore } from "@/store";
 import { formatTime, formatLikes } from "@/utils/format";
 import CommentSection from "@/components/CommentSection";
+import ImagePreview from "@/components/ImagePreview";
 import styles from "./index.less";
 
 const DetailsPage = () => {
@@ -18,6 +19,8 @@ const DetailsPage = () => {
     resetCurrentNote,
   } = useNoteStore();
   const [noteId, setNoteId] = useState<string>("");
+  const [previewVisible, setPreviewVisible] = useState(false);
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
   useEffect(() => {
     // 从路由参数中获取 noteId
@@ -57,15 +60,42 @@ const DetailsPage = () => {
     });
   };
 
+  // 轮播图配置
+  const swiperConfig = {
+    current: 0,
+    autoplay: false,
+    interval: 3000,
+    duration: 500,
+    circular: true,
+    indicatorDots: true,
+    indicatorColor: "rgba(255, 255, 255, 0.6)",
+    indicatorActiveColor: "#ffffff",
+  };
+
+  // 处理图片点击
+  const handleImageClick = (index: number) => {
+    setCurrentImageIndex(index);
+    setPreviewVisible(true);
+  };
+
+  // 处理预览关闭
+  const handlePreviewClose = () => {
+    setPreviewVisible(false);
+  };
+
   if (loading || !currentNote) {
     return (
       <View className={styles.loading}>
-        <AtActivityIndicator mode="center" content="加载中..." />
+        <AtActivityIndicator
+          mode="center"
+          content="加载中..."
+          color="#f09c20"
+        />
       </View>
     );
   }
 
-  console.log(loading, currentNote, "detailsPage...");
+  // console.log(loading, currentNote, "detailsPage...");
 
   return (
     <View className={styles.detailsWrapper}>
@@ -89,13 +119,22 @@ const DetailsPage = () => {
         </View>
 
         <View className={styles.mainContent}>
-          {currentNote.images?.[0] && (
-            <Image
-              className={styles.mainImage}
-              src={currentNote.images[0]}
-              mode="widthFix"
-            />
-          )}
+          <View className={styles.mainImage}>
+            {currentNote?.images?.length && (
+              <Swiper {...swiperConfig} className={styles.swiperWrapper}>
+                {currentNote.images.map((image, index) => (
+                  <SwiperItem key={index}>
+                    <Image
+                      className={styles.imageItem}
+                      src={image}
+                      mode="aspectFill"
+                      onClick={() => handleImageClick(index)}
+                    />
+                  </SwiperItem>
+                ))}
+              </Swiper>
+            )}
+          </View>
           <View className={styles.title}>
             <Text>{currentNote.title}</Text>
           </View>
@@ -109,11 +148,7 @@ const DetailsPage = () => {
             </View>
             <View className={styles.timeItem}>
               <AtIcon value="map-pin" size="14" color="#999" />
-              {currentNote.location && (
-                <Text className={styles.address}>
-                  {currentNote.location?.name}
-                </Text>
-              )}
+              <Text>{currentNote?.location?.name || "未知"}</Text>
             </View>
           </View>
         </View>
@@ -145,6 +180,16 @@ const DetailsPage = () => {
           </View>
         </View>
       </View>
+
+      {/* 图片预览组件 */}
+      {currentNote.images && (
+        <ImagePreview
+          images={currentNote.images}
+          current={currentImageIndex}
+          visible={previewVisible}
+          onClose={handlePreviewClose}
+        />
+      )}
 
       {/* 评论区 */}
       {!userInfo?._id ? (

@@ -1,8 +1,10 @@
 import { useState, useEffect, useCallback } from "react";
 import { View, Text, Image, Input, ScrollView } from "@tarojs/components";
 import Taro from "@tarojs/taro";
-import { AtIcon } from "taro-ui";
-import "./index.less";
+import { AtIcon, AtActivityIndicator } from "taro-ui";
+import { formatNumber, formatTime, formatLikes } from "@/utils/format";
+import styles from "./index.less";
+import { useCommentStore } from "@/store";
 
 interface Props {
   noteId: string;
@@ -21,57 +23,44 @@ interface Comment {
   replies?: Comment[];
 }
 
+const PAGE_SIZE = 20;
+
+import { commentData } from "@/pages/mockdata.js";
+
 export default function CommentSection({ noteId }: Props) {
-  const [comments, setComments] = useState<Comment[]>([]);
+  const { comments, loading, hasMore, currentPage } = useCommentStore();
   const [commentText, setCommentText] = useState("");
   const [selectedImages, setSelectedImages] = useState<string[]>([]);
   const [showEmojiPanel, setShowEmojiPanel] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const [hasMore, setHasMore] = useState(true);
-  const [page, setPage] = useState(1);
-  const PAGE_SIZE = 20;
+  const [showCommentPanel, setShowCommentPanel] = useState(false);
+  const [keyboardHeight, setKeyboardHeight] = useState(0);
 
-  const fetchComments = useCallback(
+  const { addComment, fetchComments, likeComment } = useCommentStore();
+
+  const handleFetchComments = useCallback(
     async (pageNum: number = 1, refresh: boolean = false) => {
       try {
-        setLoading(true);
-        const res = await Taro.cloud.callFunction({
-          name: "getComments",
-          data: {
-            noteId,
-            page: pageNum.toString(),
-            pageSize: PAGE_SIZE.toString(),
-          },
-        });
-
-        const { data, hasMore } = res.result as {
-          data: Comment[];
-          hasMore: boolean;
-        };
-        setComments((prev) => (refresh ? data : [...prev, ...data]));
-        setHasMore(hasMore);
-        setPage(pageNum);
+        await fetchComments(noteId, refresh);
       } catch (error) {
+        console.error("加载评论失败", error);
         Taro.showToast({
           title: "加载评论失败",
           icon: "none",
         });
-      } finally {
-        setLoading(false);
       }
     },
-    [noteId],
+    [noteId, fetchComments],
   );
 
   useEffect(() => {
-    fetchComments();
-  }, [fetchComments]);
+    handleFetchComments(1, true);
+  }, [handleFetchComments]);
 
   const handleLoadMore = useCallback(() => {
     if (!loading && hasMore) {
-      fetchComments(page + 1);
+      handleFetchComments(currentPage + 1);
     }
-  }, [loading, hasMore, page, fetchComments]);
+  }, [loading, hasMore, currentPage, handleFetchComments]);
 
   const handleChooseImage = useCallback(async () => {
     try {
@@ -90,7 +79,22 @@ export default function CommentSection({ noteId }: Props) {
     setSelectedImages((prev) => prev.filter((_, i) => i !== index));
   }, []);
 
-  const handleSubmitComment = useCallback(async () => {
+  const handleCommentInputFocus = useCallback((e) => {
+    // 获取键盘高度
+    const keyboardHeight = e.detail.height || 0;
+    setKeyboardHeight(keyboardHeight);
+    setShowCommentPanel(true);
+  }, []);
+
+  const handleCommentInputBlur = useCallback(() => {
+    // 延迟关闭面板，以便点击发送按钮
+    setTimeout(() => {
+      setShowCommentPanel(false);
+      setKeyboardHeight(0);
+    }, 200);
+  }, []);
+
+  const handleSendComment = useCallback(async () => {
     if (!commentText.trim() && selectedImages.length === 0) {
       Taro.showToast({
         title: "请输入评论内容或选择图片",
@@ -100,9 +104,9 @@ export default function CommentSection({ noteId }: Props) {
     }
 
     try {
-      setLoading(true);
       let uploadedImages: string[] = [];
 
+      // 1. 如果有图片，先上传图片
       if (selectedImages.length > 0) {
         const uploadTasks = selectedImages.map((path) =>
           Taro.cloud.uploadFile({
@@ -114,123 +118,45 @@ export default function CommentSection({ noteId }: Props) {
         uploadedImages = results.map((res) => res.fileID);
       }
 
-      await Taro.cloud.callFunction({
-        name: "addComment",
-        data: {
-          noteId,
-          content: commentText,
-          images: uploadedImages,
-        },
-      });
+      // 2. 使用 store 的 addComment 方法发布评论
+      const success = await addComment(noteId, commentText, uploadedImages);
 
-      setCommentText("");
-      setSelectedImages([]);
-      setShowEmojiPanel(false);
-      fetchComments(1, true);
+      if (success) {
+        // 3. 清空输入和图片
+        setCommentText("");
+        setSelectedImages([]);
+        setShowEmojiPanel(false);
+        setShowCommentPanel(false);
 
-      Taro.showToast({
-        title: "评论成功",
-        icon: "success",
-      });
+        Taro.showToast({
+          title: "评论成功",
+          icon: "none",
+        });
+      } else {
+        throw new Error("评论失败");
+      }
     } catch (error) {
+      console.error("评论失败:", error);
       Taro.showToast({
         title: "评论失败",
         icon: "none",
       });
-    } finally {
-      setLoading(false);
     }
-  }, [commentText, selectedImages, noteId, fetchComments]);
-
-  const renderCommentItem = useCallback(
-    (comment: Comment, isReply: boolean = false) => {
-      return (
-        <View
-          key={comment._id}
-          className={`commentItem ${isReply ? "replyItem" : ""}`}
-        >
-          <Image className="avatar" src={comment.avatar} />
-          <View className="commentContent">
-            <View className="commentHeader">
-              <Text className="nickname">{comment.nickname}</Text>
-              <Text className="time">{comment.createTime}</Text>
-            </View>
-            <View className="commentText">{comment.content}</View>
-            {comment.images && comment.images.length > 0 && (
-              <View className="imageList">
-                {comment.images.map((image, index) => (
-                  <Image
-                    key={index}
-                    className="commentImage"
-                    src={image}
-                    onClick={() => {
-                      Taro.previewImage({
-                        current: image,
-                        urls: comment.images || [],
-                      });
-                    }}
-                  />
-                ))}
-              </View>
-            )}
-            <View className="commentFooter">
-              <View className="commentActions">
-                <View
-                  className="actionItem"
-                  onClick={() => handleLikeComment(comment._id)}
-                >
-                  <AtIcon
-                    value={comment.isLiked ? "heart-2" : "heart"}
-                    size="16"
-                    color={comment.isLiked ? "#ff4757" : "#999"}
-                  />
-                  <Text>{comment.likes}</Text>
-                </View>
-                <View
-                  className="actionItem"
-                  onClick={() => handleReplyComment(comment._id)}
-                >
-                  <AtIcon value="message" size="16" />
-                  <Text>回复</Text>
-                </View>
-              </View>
-              {comment.replies && comment.replies.length > 0 && (
-                <Text
-                  className="showReplies"
-                  onClick={() => handleShowReplies(comment._id)}
-                >
-                  {`查看${comment.replies.length}条回复`}
-                </Text>
-              )}
-            </View>
-            {comment.replies && comment.replies.length > 0 && (
-              <View className="replyList">
-                {comment.replies.map((reply) => renderCommentItem(reply, true))}
-              </View>
-            )}
-          </View>
-        </View>
-      );
-    },
-    [],
-  );
+  }, [commentText, selectedImages, noteId, addComment]);
 
   const handleLikeComment = useCallback(
     async (commentId: string) => {
       try {
-        await Taro.cloud.callFunction({
-          name: "likeComment",
-          data: { commentId },
-        });
-        fetchComments(1, true);
+        await likeComment(commentId);
       } catch (error) {
+        console.error("点赞失败:", error);
         Taro.showToast({
-          title: "操作失败",
+          title: "点赞失败",
           icon: "none",
         });
       }
     },
-    [fetchComments],
+    [likeComment],
   );
 
   const handleReplyComment = useCallback((commentId: string) => {
@@ -241,65 +167,206 @@ export default function CommentSection({ noteId }: Props) {
     // 在这里实现展示回复列表的逻辑
   }, []);
 
+  const renderCommentReplyItem = useCallback((reply: Comment) => {
+    return (
+      <View className={styles.commentReply}>
+        <Image className={styles.avatar} src={reply.avatar} mode="widthFix" />
+        <View className={styles.replyContent}>
+          <View className={styles.headerLeft}>
+            <View className={styles.header}>
+              <Text className={styles.nickname}>
+                {reply.nickname || "不开心和没头脑"}
+              </Text>
+            </View>
+            <Text className={styles.text}>{reply.content}</Text>
+            <Text className={styles.textSuffix}>
+              <Text className={styles.suffixTime}>
+                {formatTime(reply.createdAt)}
+              </Text>
+              <Text className={styles.suffixAddress}>
+                {reply?.address || "未知"}
+              </Text>
+              <Text className={styles.suffixReply}>回复</Text>
+            </Text>
+          </View>
+          <View
+            className={styles.actionItem}
+            onClick={() => handleLikeComment(reply._id)}
+          >
+            <AtIcon value="heart" size="16" />
+            <Text className={styles.text}>{formatLikes(reply.likes || 0)}</Text>
+          </View>
+        </View>
+      </View>
+    );
+  }, []);
+
+  const renderCommentItem = useCallback((comment: Comment, isReply = false) => {
+    return (
+      <View className={styles.commentItem} key={comment._id}>
+        <Image className={styles.avatar} src={comment.avatar} mode="widthFix" />
+        <View className={styles.commentContent}>
+          <View className={styles.commentSelfHeader}>
+            <View className={styles.headerLeft}>
+              <View className={styles.header}>
+                <Text className={styles.nickname}>
+                  {comment.nickname || "未知"}
+                </Text>
+              </View>
+              <Text className={styles.text}>{comment.content}</Text>
+              <Text className={styles.textSuffix}>
+                <Text className={styles.suffixTime}>
+                  {formatTime(comment.createdAt)}
+                </Text>
+                <Text className={styles.suffixAddress}>
+                  {comment?.address || "未知"}
+                </Text>
+                <Text className={styles.suffixReply}>回复</Text>
+              </Text>
+            </View>
+            <View
+              className={styles.actionItem}
+              onClick={() => handleLikeComment(comment._id)}
+            >
+              <AtIcon value="heart" size="16" />
+              <Text className={styles.text}>
+                {formatLikes(comment.likes || 0)}
+              </Text>
+            </View>
+          </View>
+
+          {/* 第一条回复整体 */}
+          {comment.replies?.length && (
+            <View className={styles.commentReplyList}>
+              {comment.replies?.map((v) => renderCommentReplyItem(v))}
+            </View>
+          )}
+
+          {/* {comment.images && comment.images.length > 0 && (
+            <View className={styles.imageList}>
+              {comment.images.map((image, index) => (
+                <Image
+                  key={index}
+                  className={styles.commentImage}
+                  src={image}
+                  mode="aspectFill"
+                />
+              ))}
+            </View>
+          )}
+          <View className={styles.commentFooter}>
+            <View className={styles.commentActions}>
+              <View
+                className={styles.actionItem}
+                onClick={() => handleLikeComment(comment._id)}
+              >
+                <AtIcon value="heart" size="16" />
+                <Text>{comment.likes || 0}</Text>
+              </View>
+              <View
+                className={styles.actionItem}
+                onClick={() => handleReplyComment(comment._id)}
+              >
+                <AtIcon value="message" size="16" />
+                <Text>回复</Text>
+              </View>
+            </View>
+            {comment.replies && comment.replies.length > 0 && (
+              <Text
+                className={styles.showReplies}
+                onClick={() => handleShowReplies(comment._id)}
+              >
+                {`查看${comment.replies.length}条回复`}
+              </Text>
+            )}
+          </View>*/}
+        </View>
+      </View>
+    );
+  }, []);
+
   return (
-    <View className="commentSection">
-      <View className="commentHeader">
-        <Text className="commentCount">{`${comments.length}条评论`}</Text>
+    <View className={styles.commentSection}>
+      <View className={styles.commentTopHeader}>
+        <Text className={styles.commentCount}>
+          共 {`${formatNumber(comments.length)}`} 条评论
+        </Text>
       </View>
 
-      <ScrollView
-        className="commentList"
-        scrollY
-        onScrollToLower={handleLoadMore}
-      >
-        {comments.map((comment) => renderCommentItem(comment))}
-        {loading && <View className="loading">加载中...</View>}
-        {!loading && !hasMore && comments.length > 0 && (
-          <View className="loading">没有更多评论了</View>
-        )}
-      </ScrollView>
-
-      <View className="commentBox">
-        <View className="inputWrapper">
+      <View className={styles.commentBox}>
+        <View className={styles.inputWrapper}>
           <Input
-            className="commentInput"
-            value={commentText}
-            onInput={(e) => setCommentText(e.detail.value)}
+            className={styles.commentInput}
+            value={""}
+            // onInput={(e) => setCommentText(e.detail.value)}
+            onFocus={handleCommentInputFocus}
+            onBlur={handleCommentInputBlur}
             placeholder="说点什么..."
             disabled={loading}
           />
-          <View className="inputActions">
-            <View className="actionItem" onClick={handleChooseImage}>
-              <AtIcon value="image" size="20" />
+        </View>
+      </View>
+
+      <ScrollView
+        scrollY
+        className={styles.commentList}
+        onScrollToLower={handleLoadMore}
+      >
+        {/* {comments.map((comment) => renderCommentItem(comment))} */}
+        {commentData.map((comment) => renderCommentItem(comment))}
+        {loading && <AtActivityIndicator content="加载中..." color="#f09c20" />}
+        {!loading && !hasMore && comments.length > 0 && (
+          <View className={styles.loading}>- 没有更多评论了 -</View>
+        )}
+      </ScrollView>
+
+      {showCommentPanel && (
+        <View
+          className={styles.mask}
+          onClick={() => setShowCommentPanel(false)}
+        />
+      )}
+      <View
+        className={`${styles.commentPanelWrapper} ${showCommentPanel ? styles.show : ""}`}
+        style={{ bottom: `${keyboardHeight}px` }}
+        onClick={(e) => e.stopPropagation()}
+      >
+        <View className={styles.panelContent}>
+          <View className={styles.textareaWrapper}>
+            <Input
+              type="text"
+              maxlength={500}
+              value={commentText}
+              adjustPosition={false}
+              focus={!!showCommentPanel}
+              className={styles.textarea}
+              placeholder="良言一句三冬暖，恶语伤人律师函..."
+              onInput={(e) => setCommentText(e.detail.value)}
+            />
+          </View>
+          <View className={styles.panelFooter}>
+            <View className={styles.toolbar}>
+              <View className={styles.toolbarItem} onClick={() => {}}>
+                <AtIcon value="tag" size="22" color="#666" />
+              </View>
+              <View
+                className={styles.toolbarItem}
+                onClick={() => setShowEmojiPanel(!showEmojiPanel)}
+              >
+                <AtIcon value="lightning-bolt" size="22" color="#666" />
+              </View>
+              <View className={styles.toolbarItem} onClick={handleChooseImage}>
+                <AtIcon value="image" size="22" color="#666" />
+              </View>
             </View>
             <View
-              className="actionItem"
-              onClick={() => setShowEmojiPanel(!showEmojiPanel)}
+              className={`${styles.sendButton} ${commentText.trim() ? styles.active : ""}`}
+              onClick={handleSendComment}
             >
-              <AtIcon value="emoji" size="20" />
+              发送
             </View>
           </View>
         </View>
-
-        {selectedImages.length > 0 && (
-          <View className="selectedImages">
-            {selectedImages.map((image, index) => (
-              <View key={index} className="imageItem">
-                <Image className="preview" src={image} />
-                <View
-                  className="deleteBtn"
-                  onClick={() => handleDeleteImage(index)}
-                >
-                  <AtIcon value="close" size="12" color="#fff" />
-                </View>
-              </View>
-            ))}
-          </View>
-        )}
-
-        {showEmojiPanel && (
-          <View className="emojiPanel">{/* 在这里实现表情面板 */}</View>
-        )}
       </View>
     </View>
   );
