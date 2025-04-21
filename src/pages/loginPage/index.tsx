@@ -97,7 +97,7 @@ export default function LoginPage() {
       <View className={styles.content}>
         <Image
           className={styles.loginImage}
-          src={require("@/assets/images/logo.png")}
+          src={require("@/assets/images/logo_zoom.png")}
           mode="widthFix"
         />
 

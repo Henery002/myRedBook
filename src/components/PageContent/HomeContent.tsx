@@ -10,7 +10,7 @@ import {
 } from "taro-ui";
 import { formatLikes } from "@/utils/format";
 import Taro from "@tarojs/taro";
-import { useNoteStore } from "@/store";
+import { useNoteStore, useCategoryStore } from "@/store";
 import styles from "./index.less";
 
 const PAGE_SIZE = 10;
@@ -19,11 +19,38 @@ const HomeContent: React.FC = () => {
   const [current, setCurrent] = useState(0);
   const [searchValue, setSearchValue] = useState("");
   const { notes, loading, hasMore, fetchNotes } = useNoteStore();
+  const {
+    categories,
+    loading: categoriesLoading,
+    fetchCategories,
+  } = useCategoryStore();
+  const [tabList, setTabList] = useState([{ title: "推荐" }]);
 
   // 初始加载和下拉刷新
   useEffect(() => {
     fetchNotes(true);
   }, [fetchNotes]);
+
+  // 加载分类数据
+  useEffect(() => {
+    const loadCategories = async () => {
+      await fetchCategories();
+    };
+
+    loadCategories();
+  }, [fetchCategories]);
+
+  // 当分类数据加载完成后，更新 tabList
+  useEffect(() => {
+    if (categories.length > 0) {
+      // 保留推荐分类，添加数据库中的分类
+      const newTabList = [
+        { title: "推荐" },
+        ...categories.map((category) => ({ title: category.name })),
+      ];
+      setTabList(newTabList);
+    }
+  }, [categories]);
 
   // 处理搜索
   const handleSearch = useCallback((value: string) => {
@@ -59,13 +86,6 @@ const HomeContent: React.FC = () => {
       url: `/packageA/pages/detailsPage/index?id=${noteId}`,
     });
   }, []);
-
-  const tabList = [
-    { title: "推荐" },
-    { title: "视频" },
-    { title: "直播" },
-    { title: "美食" },
-  ];
 
   const renderWaterfall = () => {
     if (loading && !notes.length) {
@@ -168,7 +188,9 @@ const HomeContent: React.FC = () => {
             current={current}
             tabList={tabList}
             onClick={handleTabClick}
-            swipeable={false}
+            scroll
+            swipeable
+            animated
           >
             {tabList.map((_, index) => (
               <AtTabsPane current={current} index={index} key={index}>

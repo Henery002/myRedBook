@@ -117,3 +117,19 @@ export interface NoteState {
   // 重置当前笔记
   resetCurrentNote: () => void;
 }
+
+// 分类接口
+export interface Category {
+  _id: string;
+  name: string;
+}
+
+// 分类状态接口
+export interface CategoryState {
+  categories: Category[];
+  loading: boolean;
+  error: string | null;
+
+  // 获取所有分类
+  fetchCategories: () => Promise<void>;
+}

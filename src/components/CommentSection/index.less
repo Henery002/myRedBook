@@ -58,7 +58,7 @@
 
     .commentItem {
       display: flex;
-      margin-bottom: 24px;
+      // margin-bottom: 24px;
 
       &:last-child {
         margin-bottom: 0;
@@ -74,7 +74,8 @@
 
       // 每一大条评论体
       .commentContent {
-        margin-bottom: 36px;
+        margin-bottom: 24px;
+        flex: 1;
 
         // 11111
         .commentSelfHeader {
@@ -85,6 +86,9 @@
           gap: 24px;
 
           .headerLeft {
+            flex: 1;
+            transition: all 0.2s ease;
+
             .header {
               .nickname {
                 font-size: 28px;
@@ -122,6 +126,11 @@
                 color: #777;
               }
             }
+
+            &:active {
+              background-color: #f5f5f5;
+              // transform: scale(0.98);
+            }
           }
 
           .actionItem {
@@ -148,6 +157,8 @@
           flex-direction: column;
           gap: 24px;
 
+          margin-bottom: 38px;
+
           // 11111
           .commentReply {
             display: flex;
@@ -169,6 +180,7 @@
 
               .headerLeft {
                 flex: 1;
+                transition: all 0.2s ease;
 
                 .header {
                   .nickname {
@@ -177,6 +189,11 @@
                     color: #666;
                     margin-right: 16px;
                   }
+                }
+
+                &:active {
+                  background-color: #f5f5f5;
+                  // transform: scale(0.98);
                 }
               }
 
@@ -312,10 +329,14 @@
     left: 0;
     right: 0;
     bottom: 0;
-    background: rgba(0, 0, 0, 0.3);
-    z-index: 99999;
+    background-color: rgba(0, 0, 0, 0.3);
+    z-index: 100;
     opacity: 1;
     transition: opacity 0.2s ease-out;
+
+    &.closing {
+      opacity: 0;
+    }
   }
 
   .commentPanelWrapper {
@@ -324,16 +345,18 @@
     left: 0;
     right: 0;
     bottom: 0;
-    transform: translateY(100%);
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     z-index: 100000;
     box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.18);
+    will-change: transform;
+    transform: translateY(100%);
+    transition: transform 0.2s ease-out;
 
     &.show {
       transform: translateY(0);
-      & + .mask {
-        opacity: 1;
-      }
+    }
+
+    &.closing {
+      transform: translateY(100%);
     }
 
     .panelContent {
@@ -393,8 +416,11 @@
         }
 
         .sendButton {
-          padding: 16px 48px;
-          border-radius: 32px;
+          margin: 0;
+          height: 56px;
+          line-height: 56px;
+          padding: 0 48px;
+          border-radius: 28px;
           font-size: 28px;
           color: #fff;
           background: #ccc;
@@ -411,6 +437,56 @@
           }
         }
       }
+    }
+  }
+
+  // 回复信息相关样式
+  .viewReplies {
+    font-size: 24px;
+    color: #666;
+    padding: 8px 0;
+    display: flex;
+    align-items: center;
+    margin-top: 8px;
+
+    &:active {
+      opacity: 0.8;
+    }
+  }
+
+  .replyToInfo {
+    display: flex;
+    align-items: center;
+    padding: 12px 0;
+    font-size: 26px;
+    color: #666;
+    position: relative;
+
+    .replyToName {
+      color: #f09c20;
+      font-weight: 500;
+      margin: 0 4px;
+    }
+
+    .replyToCancel {
+      position: absolute;
+      right: 8px;
+      top: 8px;
+      padding: 4px;
+
+      &:active {
+        opacity: 0.7;
+      }
+    }
+  }
+
+  .replyToText {
+    font-size: 24px;
+    color: #666;
+    margin-left: 8px;
+
+    .replyToName {
+      color: #f09c20;
     }
   }
 }

@@ -37,17 +37,17 @@ export function formatTime(dateStr: string | number | Date): string {
 
   // 小于1小时
   if (diff < 60 * 60 * 1000) {
-    return `${Math.floor(diff / (60 * 1000))} 分钟前`;
+    return `${Math.floor(diff / (60 * 1000))}分钟前`;
   }
 
   // 小于24小时
   if (diff < 24 * 60 * 60 * 1000) {
-    return `${Math.floor(diff / (60 * 60 * 1000))} 小时前`;
+    return `${Math.floor(diff / (60 * 60 * 1000))}小时前`;
   }
 
   // 小于7天
   if (diff < 7 * 24 * 60 * 60 * 1000) {
-    return `${Math.floor(diff / (24 * 60 * 60 * 1000))} 天前`;
+    return `${Math.floor(diff / (24 * 60 * 60 * 1000))}天前`;
   }
 
   // 显示具体日期

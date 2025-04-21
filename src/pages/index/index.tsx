@@ -43,7 +43,7 @@ function IndexPage() {
   const handleTabChange = (index: number) => {
     if (index === 1) {
       Taro.navigateTo({
-        url: "/pages/publishPage/index",
+        url: `${userInfo?._id ? "/pages/publishPage/index" : "/pages/userPage/index"}`,
       });
       return;
     }

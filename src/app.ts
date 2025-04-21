@@ -3,6 +3,7 @@ import { type PropsWithChildren, useEffect } from "react";
 import { useCloudStore } from "@/store";
 
 import "taro-ui/dist/style/index.scss";
+import "./styles/custom-tabs.less";
 import "./app.less";
 
 const App = (props: PropsWithChildren) => {
