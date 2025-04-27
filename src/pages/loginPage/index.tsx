@@ -5,7 +5,7 @@ import { AtNavBar, AtButton, AtForm, AtInput, AtCheckbox } from "taro-ui";
 
 import { useUserStore } from "@/store";
 
-import styles from "@/pages/index/index.less";
+import styles from "./index.less";
 
 interface FormData {
   phone: string;
@@ -72,10 +72,11 @@ export default function LoginPage() {
       const res = await login(formData);
 
       if (!!res) {
-        Taro.navigateTo({
-          // Taro.reLaunch({
-          url: "/pages/index/index",
-        });
+        // Taro.navigateTo({
+        // Taro.reLaunch({
+        // url: "/pages/index/index",
+        // });
+        Taro.navigateBack(); // 登陆成功后回到之前的页面
       }
     } catch (error) {
       console.error(error, "登录失败");

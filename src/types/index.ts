@@ -6,7 +6,7 @@ export interface Note {
   author: {
     _id: string;
     avatarUrl: string;
-    nickName: string;
+    nickname: string;
     phone?: string;
   };
   location?: {

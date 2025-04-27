@@ -1,4 +1,5 @@
 .tabBar {
+  height: 96px;
   position: fixed;
   bottom: 0;
   left: 0;
@@ -14,12 +15,19 @@
       padding-bottom: env(safe-area-inset-bottom);
       box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.06);
 
-      height: 96px !important;
+      height: 96px;
       align-items: center;
+
+      padding: 0 !important;
 
       &__item {
         padding: 0 16px;
         height: auto;
+
+        display: flex;
+        flex: 1;
+        align-items: center;
+        justify-content: center;
 
         &--active {
           .at-tab-bar__title {
@@ -38,7 +46,7 @@
             color: #fff !important;
             font-weight: 400;
             box-sizing: content-box;
-            padding: 6px 40px;
+            padding: 10px 52px;
             border-radius: 28px;
             background-color: #f09c20;
           }

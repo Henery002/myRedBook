@@ -87,7 +87,7 @@ export const useNoteStore = create<NoteState>()(
               ...note,
               author: {
                 _id: author?._id || note._openid,
-                nickname: author?.nickName || author?.phone,
+                nickname: author?.nickname || author?.phone,
                 avatarUrl: author?.avatarUrl || AVATAR_URL,
               },
               isLiked,
@@ -177,7 +177,7 @@ export const useNoteStore = create<NoteState>()(
           ...note,
           author: {
             _id: author?._id || note._openid,
-            nickname: author?.nickName || author?.phone,
+            nickname: author?.nickname || author?.phone,
             avatarUrl: author?.avatarUrl || AVATAR_URL,
           },
           isLiked,

@@ -5,6 +5,8 @@ import type { UserState, UserInfo, LoginParams } from "../types";
 import { getDB } from "@/services/cloud";
 import { encryptPassword } from "@/utils/crypto";
 
+import AVATAR_IMG from "@/assets/images/avatar.jpeg";
+
 // 持久化存储的key
 const STORAGE_KEY = "USER_INFO";
 
@@ -93,20 +95,87 @@ export const useUserStore = create<UserState>()(
         if (data.length === 0) {
           // 新用户，插入数据库
           // 注意：不需要手动设置 _openid，云开发会自动设置
+          const now = db.serverDate();
           const { _id } = await db.collection("users").add({
             data: {
+              // 基础信息
               phone: params.phone,
               password: encryptedPassword, // 加密密码
-              createTime: db.serverDate(), // 创建时间
-              updateTime: db.serverDate(), // 更新时间
+              nickname: `用户${params.phone.substr(-4)}`, // 默认昵称
+              avatarUrl: AVATAR_IMG, // 默认头像
+              bio: "", // 默认简介
+              gender: 0, // 默认性别
+
+              // 地理位置信息
+              country: "",
+              province: "",
+              city: "",
+              district: "",
+              ip: "",
+
+              // 统计数据
+              followingCount: 0,
+              followersCount: 0,
+              notesCount: 0,
+              likesCount: 0,
+              collectionsCount: 0,
+
+              // 用户内容
+              notes: [],
+              likedNotes: [],
+              collectedNotes: [],
+              following: [],
+              followers: [],
+
+              // 账号状态
+              status: "active",
+              isVerified: false,
+              role: "user",
+
+              // 时间信息
+              createTime: now,
+              updateTime: now,
+              lastLoginTime: now,
+
+              // 其他设置
+              settings: {
+                notificationEnabled: true,
+                privacyLevel: "public",
+                theme: "light",
+                language: "zh",
+              },
             },
           });
 
           userInfo = {
             _id: _id as string,
             phone: params.phone,
-            // password: params.password,
+            nickname: `用户${params.phone.substr(-4)}`,
+            avatarUrl: AVATAR_IMG,
+            bio: "",
+            gender: 0,
+            followingCount: 0,
+            followersCount: 0,
+            notesCount: 0,
+            likesCount: 0,
+            collectionsCount: 0,
+            notes: [],
+            likedNotes: [],
+            collectedNotes: [],
+            following: [],
+            followers: [],
+            status: "active",
+            isVerified: false,
+            role: "user",
             createTime: new Date(),
+            updateTime: new Date(),
+            lastLoginTime: new Date(),
+            settings: {
+              notificationEnabled: true,
+              privacyLevel: "public",
+              theme: "light",
+              language: "zh",
+            },
           };
         } else {
           // 已存在的用户，验证密码
@@ -123,6 +192,18 @@ export const useUserStore = create<UserState>()(
             });
             return false; // 返回 false 表示登录失败
           }
+
+          // 更新最后登录时间
+          await db
+            .collection("users")
+            .doc(existingUser._id as string)
+            .update({
+              data: {
+                lastLoginTime: db.serverDate(),
+                updateTime: db.serverDate(),
+              },
+            });
+
           userInfo = existingUser;
         }
 

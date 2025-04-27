@@ -14,110 +14,19 @@
     background: #fff;
     border-radius: 8px;
     overflow: hidden;
+
+    .at-tabs__header {
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+      &::-webkit-scrollbar {
+        display: none;
+      }
+    }
   }
 
   .scrollView {
     min-height: calc(100vh - 180px);
     padding: 16px 0;
-  }
-
-  .waterfallWrapper {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    width: 100%;
-    box-sizing: border-box;
-  }
-
-  .column {
-    width: 49%;
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
-  }
-
-  .card {
-    width: 100%;
-    background: #fff;
-    border-radius: 8px;
-    overflow: hidden;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.06);
-
-    .cover {
-      width: 100%;
-      // position: relative; // point1 首页使用图片widthFix模式的瀑布流布局的话则需要去掉以下4点
-      // padding-bottom: 100%; // point2
-      overflow: hidden;
-
-      image {
-        // position: absolute; // point3
-        // top: 0;
-        // left: 0;
-        width: 100%;
-        // height: 100%; // point4
-        object-fit: cover;
-      }
-    }
-
-    .content {
-      padding: 12px;
-
-      .title {
-        font-size: 28px;
-        font-weight: 400;
-        color: #333;
-        line-height: 1.4;
-        margin-bottom: 8px;
-        display: -webkit-box;
-        -webkit-box-orient: vertical;
-        -webkit-line-clamp: 2;
-        overflow: hidden;
-      }
-
-      .userInfo {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-
-        .userInfoItem {
-          display: flex;
-          align-items: center;
-
-          image {
-            width: 48px;
-            height: 48px;
-            background-color: #e1e1e1;
-            border-radius: 50%;
-            margin-right: 16px;
-          }
-
-          .userName {
-            font-size: 24px;
-            color: #333;
-            line-height: 1.4;
-            font-weight: 300;
-          }
-        }
-
-        .actionItem {
-          display: flex;
-          align-items: center;
-          gap: 8px;
-
-          .at-icon {
-            font-size: 24px;
-            color: #333;
-            font-weight: 300;
-          }
-
-          .likes {
-            font-size: 24px;
-            color: #333;
-            font-weight: 300;
-          }
-        }
-      }
-    }
   }
 
   .loading,
@@ -132,5 +41,105 @@
 
   .noMore {
     color: #ccc;
+  }
+}
+
+// 瀑布流布局通用样式
+.waterfallWrapper {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.column {
+  width: 49%;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.card {
+  width: 100%;
+  background: #fff;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.06);
+
+  .cover {
+    width: 100%;
+    // position: relative; // point1 首页使用图片widthFix模式的瀑布流布局的话则需要去掉以下4点
+    // padding-bottom: 100%; // point2
+    overflow: hidden;
+
+    image {
+      // position: absolute; // point3
+      // top: 0;
+      // left: 0;
+      width: 100%;
+      // height: 100%; // point4
+      object-fit: cover;
+    }
+  }
+
+  .content {
+    padding: 12px;
+
+    .title {
+      font-size: 28px;
+      font-weight: 400;
+      color: #333;
+      line-height: 1.4;
+      margin-bottom: 8px;
+      display: -webkit-box;
+      -webkit-box-orient: vertical;
+      -webkit-line-clamp: 2;
+      overflow: hidden;
+    }
+
+    .userInfo {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+
+      .userInfoItem {
+        display: flex;
+        align-items: center;
+
+        image {
+          width: 48px;
+          height: 48px;
+          background-color: #e1e1e1;
+          border-radius: 50%;
+          margin-right: 16px;
+        }
+
+        .userName {
+          font-size: 24px;
+          color: #333;
+          line-height: 1.4;
+          font-weight: 300;
+        }
+      }
+
+      .actionItem {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+
+        .at-icon {
+          font-size: 24px;
+          color: #333;
+          font-weight: 300;
+        }
+
+        .likes {
+          font-size: 24px;
+          color: #333;
+          font-weight: 300;
+        }
+      }
+    }
   }
 }

@@ -1,205 +1,259 @@
 .userPageWrapper {
-  min-height: 100vh;
-  background-color: #ffffff;
-  padding-bottom: 120px;
-  position: relative;
+  height: 100vh;
+  overflow: hidden;
 
-  .userHeader {
-    padding: 32px 24px;
+  .userPage {
+    // min-height: calc(100vh - 104px);
+    height: calc(100vh - 104px);
+    overflow-y: auto;
+    background-color: #f5f5f5;
+    /* 使用相对路径引用背景图片 */
+    background-image: url("../../assets/images/background_1.jpeg");
+    background-size: cover;
+    background-position: top;
     display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
+    flex-direction: column;
+    position: relative;
+    -ms-overflow-style: none; /* IE and Edge */
+    scrollbar-width: none; /* Firefox */
 
-    .userInfo {
+    &::-webkit-scrollbar {
+      display: none; /* Chrome, Safari and Opera */
+    }
+
+    .userHeader {
+      padding: 32px 24px;
       display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+
+      .userInfo {
+        display: flex;
+        flex: 1;
+        align-items: center;
+        gap: 24px;
+
+        .avatar {
+          width: 120px;
+          height: 120px;
+          border-radius: 60px;
+          background-color: #f5f5f5;
+        }
+
+        .userMeta {
+          display: flex;
+          flex: 1;
+          flex-direction: column;
+          gap: 8px;
+
+          .nickname {
+            font-size: 30px;
+            font-weight: 400;
+            color: #fff;
+            line-height: 1.4;
+          }
+
+          .extraInfo {
+            display: flex;
+            gap: 20px;
+
+            .sex,
+            .ip {
+              font-size: 22px;
+              color: #fff;
+              line-height: 1.4;
+            }
+          }
+        }
+      }
+
+      .settingBtn {
+        padding: 12px;
+        margin-top: 8px;
+      }
+    }
+
+    .bioSection {
+      padding: 16px 24px;
+
+      .bioText {
+        font-size: 28px;
+        color: #fff;
+        line-height: 1.4;
+      }
+    }
+
+    .statsSection {
+      padding: 24px 24px 32px;
+      display: flex;
+
+      .statsItem {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 8px;
+
+        .statsNum {
+          font-size: 32px;
+          // font-weight: 500;
+          color: #fff;
+        }
+
+        .statsLabel {
+          font-size: 26px;
+          color: #fff;
+        }
+      }
+    }
+
+    .contentTabs {
+      display: flex;
+      flex: 1;
+      padding: 0; // 0 48px;
+
+      :global {
+        .at-tabs {
+          height: auto;
+          background-color: #fff;
+          border-top-left-radius: 16px;
+          border-top-right-radius: 16px;
+          display: flex;
+          flex-direction: column;
+          flex: 1;
+
+          .at-tabs-pane {
+            padding: 16px;
+          }
+
+          .at-tabs__body {
+            flex: 1;
+          }
+        }
+      }
+
+      .tabItem {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 24px 0;
+        position: relative;
+
+        .tabText {
+          font-size: 28px;
+          color: #999999;
+          line-height: 1.4;
+
+          &.active {
+            color: #333333;
+            font-weight: 500;
+          }
+        }
+
+        .tabLine {
+          position: absolute;
+          bottom: -1px;
+          width: 32px;
+          height: 2px;
+          background-color: #ff2442;
+          border-radius: 1px;
+        }
+      }
+    }
+
+    .emptyState {
+      padding-top: 80px;
+      display: flex;
+      flex-direction: column;
       align-items: center;
       gap: 24px;
 
-      .avatar {
-        width: 120px;
-        height: 120px;
-        border-radius: 60px;
-        background-color: #f5f5f5;
+      .emptyIcon {
+        width: 160px;
+        height: 160px;
+        opacity: 0.8;
       }
 
-      .userMeta {
-        display: flex;
-        flex-direction: column;
-        gap: 8px;
-
-        .nickname {
-          font-size: 28px;
-          font-weight: 600;
-          color: #333333;
-          line-height: 1.4;
-        }
-
-        .redBookId {
-          font-size: 26px;
-          color: #999999;
-          line-height: 1.4;
-        }
-      }
-    }
-
-    .settingBtn {
-      padding: 12px;
-      margin-top: 8px;
-    }
-  }
-
-  .bioSection {
-    padding: 0 24px 32px;
-
-    .bioText {
-      font-size: 28px;
-      color: #999999;
-      line-height: 1.4;
-    }
-  }
-
-  .statsSection {
-    padding: 0 24px 32px;
-    display: flex;
-    border-bottom: 1px solid #f5f5f5;
-
-    .statsItem {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 8px;
-
-      .statsNum {
-        font-size: 32px;
-        font-weight: 600;
-        color: #333333;
-      }
-
-      .statsLabel {
-        font-size: 26px;
-        color: #999999;
-      }
-    }
-  }
-
-  .contentTabs {
-    display: flex;
-    padding: 0 48px;
-    border-bottom: 1px solid #f5f5f5;
-
-    .tabItem {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      padding: 24px 0;
-      position: relative;
-
-      .tabText {
+      .emptyText {
         font-size: 28px;
         color: #999999;
-        line-height: 1.4;
-
-        &.active {
-          color: #333333;
-          font-weight: 500;
-        }
       }
 
-      .tabLine {
-        position: absolute;
-        bottom: -1px;
-        width: 32px;
-        height: 2px;
-        background-color: #ff2442;
-        border-radius: 1px;
+      .loginBtn {
+        font-size: 30px;
+        background-color: #fff;
+        border-color: #f09c20;
+        color: #f09c20;
+        margin-top: 24px;
+        padding: 0 72px;
       }
     }
-  }
 
-  .emptyState {
-    padding-top: 120px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 24px;
-
-    .emptyIcon {
-      width: 200px;
-      height: 200px;
-      opacity: 0.8;
+    // 弹框样式
+    .modalOverlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: rgba(0, 0, 0, 0.5);
+      display: flex;
+      justify-content: center;
+      align-items: flex-end;
+      z-index: 1000;
     }
 
-    .emptyText {
-      font-size: 28px;
-      color: #999999;
-    }
-  }
+    .modalContent {
+      width: 100%;
+      background-color: #f8f8f8;
+      border-top-left-radius: 24px;
+      border-top-right-radius: 24px;
+      overflow: hidden;
 
-  // 弹框样式
-  .modalOverlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-color: rgba(0, 0, 0, 0.5);
-    display: flex;
-    justify-content: center;
-    align-items: flex-end;
-    z-index: 1000;
-  }
+      &.fadeIn {
+        animation: slideUp 0.3s ease-out forwards;
+      }
 
-  .modalContent {
-    width: 100%;
-    background-color: #f8f8f8;
-    border-top-left-radius: 24px;
-    border-top-right-radius: 24px;
-    overflow: hidden;
-
-    &.fadeIn {
-      animation: slideUp 0.3s ease-out forwards;
+      &.fadeOut {
+        animation: slideDown 0.3s ease-out forwards;
+      }
     }
 
-    &.fadeOut {
-      animation: slideDown 0.3s ease-out forwards;
+    .modalOption {
+      background-color: #ffffff;
+      padding: 36px 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      border-bottom: 2px solid #f8f8f8;
+
+      &.danger {
+        margin-bottom: 16px;
+      }
+
+      .optionText {
+        font-size: 30px;
+        color: #666;
+        // font-weight: 500;
+      }
+
+      .dangerText {
+        color: #ff2442;
+      }
     }
-  }
 
-  .modalOption {
-    background-color: #ffffff;
-    padding: 36px 0;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    border-bottom: 2px solid #f8f8f8;
+    .modalCancel {
+      background-color: #ffffff;
+      padding: 36px 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
 
-    &.danger {
-      margin-bottom: 16px;
-    }
-
-    .optionText {
-      font-size: 30px;
-      color: #666;
-      // font-weight: 500;
-    }
-
-    .dangerText {
-      color: #ff2442;
-    }
-  }
-
-  .modalCancel {
-    background-color: #ffffff;
-    padding: 36px 0;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-
-    .cancelText {
-      font-size: 30px;
-      color: #666;
+      .cancelText {
+        font-size: 30px;
+        color: #666;
+      }
     }
   }
 }

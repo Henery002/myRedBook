@@ -122,7 +122,7 @@ export const useCommentStore = create<CommentState>()(
             return {
               ...comment,
               avatar: user.avatarUrl || "",
-              nickname: user.nickName || "用户" + comment._openid.substr(-4),
+              nickname: user?.nickname || "用户" + comment._openid.substr(-4),
               replies: total, // 回复数量
             };
           }),
@@ -174,7 +174,7 @@ export const useCommentStore = create<CommentState>()(
             replies: 0,
             parentId: null,
             avatar: userInfo.avatarUrl,
-            nickname: userInfo.nickName,
+            nickname: userInfo?.nickname,
             address: userInfo.city || "",
           },
         });
@@ -238,7 +238,7 @@ export const useCommentStore = create<CommentState>()(
             updateTime: now,
             likes: 0,
             avatar: userInfo.avatarUrl,
-            nickname: userInfo.nickName,
+            nickname: userInfo?.nickname,
             address: userInfo.city || "",
           },
         });
@@ -340,7 +340,7 @@ export const useCommentStore = create<CommentState>()(
               ...reply,
               avatar: user.avatarUrl || reply.avatar || "",
               nickname:
-                user.nickName ||
+                user?.nickname ||
                 reply.nickname ||
                 "用户" + reply._openid.substr(-4),
             };

@@ -142,6 +142,8 @@ export default function PublishPage() {
           author: {
             _id: userInfo?._id,
             phone: userInfo?.phone,
+            nickname: userInfo?.nickname,
+            avatarUrl: userInfo?.avatarUrl,
           },
           createTime: db.serverDate(),
           updateTime: db.serverDate(),

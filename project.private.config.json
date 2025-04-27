@@ -3,6 +3,10 @@
   "projectname": "myRedBook",
   "libVersion": "3.7.11",
   "setting": {
-    "compileHotReLoad": true
+    "compileHotReLoad": true,
+    "autoAudits": true,
+    "bigPackageSizeSupport": true,
+    "preloadBackgroundData": true,
+    "skylineRenderEnable": false
   }
 }

@@ -14,7 +14,7 @@ export default defineAppConfig({
   window: {
     backgroundTextStyle: "light",
     navigationBarBackgroundColor: "#fff",
-    navigationBarTitleText: "小黄书",
+    navigationBarTitleText: "myZone",
     navigationBarTextStyle: "black",
   },
   // 优化配置分包预加载规则

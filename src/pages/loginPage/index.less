@@ -1,0 +1,74 @@
+.loginContainer {
+  height: 100vh;
+  background: #fff;
+  display: flex;
+  flex-direction: column;
+
+  .content {
+    flex: 1;
+    padding: 0 10vw;
+    overflow-y: auto;
+
+    .loginImage {
+      // width: 80vw;
+      width: 100%;
+      // height: 40vw;
+      // margin: 9vh 0 3vh;
+      // text-align: center;
+    }
+
+    .loginForm {
+      :global {
+        .at-input__title {
+          width: 120px;
+          color: #f09c20;
+        }
+
+        .at-button {
+          margin-top: 48px;
+          border: none;
+          color: #fff;
+          background: linear-gradient(to right, #eaad52, #ee9c20);
+          border-radius: 48px;
+
+          &--disabled {
+            opacity: 0.6;
+          }
+        }
+      }
+
+      .agreement {
+        color: #999;
+        font-size: 12px;
+        text-align: center;
+        display: flex;
+        justify-content: center;
+        margin-top: 40px;
+
+        :global {
+          .at-checkbox__option-wrap {
+            padding: 0;
+
+            .at-checkbox__icon-cnt {
+              font-size: 20px;
+              width: 26px;
+              min-width: 26px;
+              height: 26px;
+              min-height: 26px;
+              margin: 4px 16px 0 0;
+            }
+
+            .at-checkbox__title {
+              font-size: 24px;
+            }
+          }
+        }
+
+        .link {
+          color: #1890ff;
+          margin: 0;
+        }
+      }
+    }
+  }
+}
