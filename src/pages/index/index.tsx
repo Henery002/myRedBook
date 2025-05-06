@@ -1,6 +1,6 @@
 import { View } from "@tarojs/components";
 import { useDidShow, useDidHide } from "@tarojs/taro";
-import { useState } from "react";
+import { useState, useRef } from "react";
 import Taro from "@tarojs/taro";
 import { AtActivityIndicator } from "taro-ui";
 import { useUserStore } from "@/store";
@@ -16,6 +16,8 @@ function IndexPage() {
   const { userInfo, checkLoginStatus } = useUserStore();
   const [isCheckingLogin, setIsCheckingLogin] = useState(false);
   const [activeTab, setActiveTab] = useState(0);
+  const isFirstRender = useRef(true);
+  const isFromDetails = useRef(false);
 
   // 检查登录状态
   const checkAuth = async () => {
@@ -26,12 +28,28 @@ function IndexPage() {
 
   // 每次页面显示时检查登录状态
   useDidShow(() => {
-    checkAuth();
+    // 首次加载时执行完整的登录检查和数据加载
+    if (isFirstRender.current) {
+      checkAuth();
+      isFirstRender.current = false;
+    } else if (isFromDetails.current) {
+      // 从详情页返回时，只检查登录状态，不触发完整的数据重新加载
+      checkLoginStatus();
+      isFromDetails.current = false;
+    } else {
+      // 其他情况（如从其他页面返回），执行完整的登录检查
+      checkAuth();
+    }
     setActiveTab(0);
   });
 
   useDidHide(() => {
-    // 清理逻辑
+    // 记录是否从详情页返回
+    const pages = Taro.getCurrentPages();
+    if (pages.length > 1) {
+      const prevPage = pages[pages.length - 2];
+      isFromDetails.current = prevPage.route.includes("detailsPage");
+    }
   });
 
   // 如果正在检查登录状态，可以显示加载状态

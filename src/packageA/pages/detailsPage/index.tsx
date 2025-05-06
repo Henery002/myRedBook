@@ -1,50 +1,90 @@
 import { View, Text, Image, Swiper, SwiperItem } from "@tarojs/components";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { AtIcon, AtActivityIndicator } from "taro-ui";
-import Taro from "@tarojs/taro";
-import { useUserStore, useNoteStore } from "@/store";
+import Taro, { useRouter, useDidShow, useDidHide } from "@tarojs/taro";
+import { useUserStore } from "@/store/slices/user";
+import { useNoteStore } from "@/store/slices/note";
+import { Note } from "@/store/types";
 import { formatTime, formatLikes } from "@/utils/format";
 import CommentSection from "@/components/CommentSection";
 import ImagePreview from "@/components/ImagePreview";
 import styles from "./index.less";
 
-const DetailsPage = () => {
+const DetailsPage: React.FC = () => {
   const { userInfo } = useUserStore();
   const {
     currentNote,
-    loading,
+    noteDetailLoading,
+    noteDetailError,
     fetchNoteDetail,
     likeNote,
     collectNote,
     resetCurrentNote,
   } = useNoteStore();
-  const [noteId, setNoteId] = useState<string>("");
   const [previewVisible, setPreviewVisible] = useState(false);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
-  useEffect(() => {
-    // 从路由参数中获取 noteId
-    const params = Taro.getCurrentInstance().router?.params;
-    if (params?.id) {
-      setNoteId(params.id);
-      fetchNoteDetail(params.id);
+  const { params } = useRouter();
+
+  // 获取笔记详情
+  const loadNoteDetail = useCallback(async () => {
+    console.log("开始加载笔记详情，params.id:", params.id);
+    if (!params.id) {
+      Taro.showToast({
+        title: "笔记ID不存在",
+        icon: "none",
+      });
+      return;
     }
 
-    // 页面卸载时重置当前笔记
-    return () => {
-      resetCurrentNote();
-    };
-  }, [fetchNoteDetail, resetCurrentNote]);
+    try {
+      console.log("调用 fetchNoteDetail，noteId:", params.id);
+      const noteDetail = await fetchNoteDetail(params.id);
+      console.log("fetchNoteDetail 返回结果:", noteDetail);
+
+      if (!noteDetail) {
+        if (noteDetailError) {
+          Taro.showToast({
+            title: noteDetailError,
+            icon: "none",
+          });
+        } else {
+          Taro.showToast({
+            title: "获取笔记详情失败",
+            icon: "none",
+          });
+        }
+      }
+    } catch (error) {
+      console.error("加载笔记详情失败:", error);
+      Taro.showToast({
+        title: "加载失败，请重试",
+        icon: "none",
+      });
+    }
+  }, [params.id, fetchNoteDetail, noteDetailError]);
+
+  // 页面显示时加载数据
+  useDidShow(() => {
+    console.log("页面显示，开始加载数据");
+    loadNoteDetail();
+  });
+
+  // 页面隐藏时清理数据
+  useDidHide(() => {
+    console.log("页面隐藏，清理数据");
+    resetCurrentNote();
+  });
 
   const handleLike = () => {
-    if (noteId) {
-      likeNote(noteId);
+    if (currentNote?._id) {
+      likeNote(currentNote._id);
     }
   };
 
   const handleCollect = () => {
-    if (noteId) {
-      collectNote(noteId);
+    if (currentNote?._id) {
+      collectNote(currentNote._id);
     }
   };
 
@@ -83,7 +123,13 @@ const DetailsPage = () => {
     setPreviewVisible(false);
   };
 
-  if (loading || !currentNote) {
+  console.log("渲染前状态:", {
+    noteDetailLoading,
+    currentNote,
+    noteDetailError,
+  });
+
+  if (noteDetailLoading || !currentNote) {
     return (
       <View className={styles.loading}>
         <AtActivityIndicator
@@ -94,8 +140,6 @@ const DetailsPage = () => {
       </View>
     );
   }
-
-  // console.log(loading, currentNote, "detailsPage...");
 
   return (
     <View className={styles.detailsWrapper}>
@@ -197,7 +241,7 @@ const DetailsPage = () => {
           <View className={styles.loginText}>登录后查看评论</View>
         </View>
       ) : (
-        noteId && <CommentSection noteId={noteId} />
+        currentNote._id && <CommentSection noteId={currentNote._id} />
       )}
     </View>
   );

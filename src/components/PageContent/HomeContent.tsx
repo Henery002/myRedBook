@@ -1,5 +1,5 @@
 import { View, Text, Image, ScrollView } from "@tarojs/components";
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, useMemo } from "react";
 import Skeleton from "@/components/Skeleton";
 import {
   AtSearchBar,
@@ -25,10 +25,17 @@ const HomeContent: React.FC = () => {
     fetchCategories,
   } = useCategoryStore();
   const [tabList, setTabList] = useState([{ title: "推荐" }]);
+  const [initialLoadDone, setInitialLoadDone] = useState(false);
 
-  // 初始加载和下拉刷新
+  // 初始化加载 - 只在组件首次挂载时执行一次
   useEffect(() => {
-    fetchNotes(true);
+    const loadInitialData = async () => {
+      // 尝试从缓存加载数据，如果没有缓存则从服务器加载
+      await fetchNotes(false, false);
+      setInitialLoadDone(true);
+    };
+
+    loadInitialData();
   }, [fetchNotes]);
 
   // 加载分类数据
@@ -52,6 +59,11 @@ const HomeContent: React.FC = () => {
     }
   }, [categories]);
 
+  // 处理下拉刷新 - 强制从服务器刷新数据
+  const handlePullRefresh = useCallback(() => {
+    fetchNotes(true, true); // 强制刷新
+  }, [fetchNotes]);
+
   // 处理搜索
   const handleSearch = useCallback((value: string) => {
     setSearchValue(value);
@@ -68,7 +80,7 @@ const HomeContent: React.FC = () => {
     (value: number) => {
       setCurrent(value);
       // TODO: 根据标签筛选内容
-      fetchNotes(true);
+      fetchNotes(true, false); // 非强制刷新，优先使用缓存
     },
     [fetchNotes],
   );
@@ -76,7 +88,7 @@ const HomeContent: React.FC = () => {
   // 处理加载更多
   const handleLoadMore = useCallback(() => {
     if (!loading && hasMore) {
-      fetchNotes(false);
+      fetchNotes(false, false); // 非强制刷新，优先使用缓存
     }
   }, [loading, hasMore, fetchNotes]);
 
@@ -87,7 +99,19 @@ const HomeContent: React.FC = () => {
     });
   }, []);
 
+  // 使用useMemo优化瀑布流渲染
+  const leftColumnNotes = useMemo(
+    () => notes.filter((_, i) => i % 2 === 0),
+    [notes],
+  );
+
+  const rightColumnNotes = useMemo(
+    () => notes.filter((_, i) => i % 2 === 1),
+    [notes],
+  );
+
   const renderWaterfall = () => {
+    // 显示骨架屏
     if (loading && !notes.length) {
       return (
         <View className={styles.waterfallWrapper}>
@@ -104,70 +128,72 @@ const HomeContent: React.FC = () => {
     return (
       <View className={styles.waterfallWrapper}>
         <View className={styles.column}>
-          {notes
-            .filter((_, i) => i % 2 === 0)
-            .map((item) => (
-              <View
-                className={styles.card}
-                key={item._id}
-                onClick={() => handleNoteClick(item._id)}
-              >
-                <View className={styles.cover}>
-                  <Image src={item.images?.[0]} mode="widthFix" lazyLoad />
-                </View>
-                <View className={styles.content}>
-                  <View className={styles.title}>{item.title}</View>
-                  <View className={styles.userInfo}>
-                    <View className={styles.userInfoItem}>
-                      <Image src={item.author.avatarUrl} mode="aspectFill" />
-                      <View className={styles.userName}>
-                        {item.author?.nickname || item.author?.phone}
-                      </View>
+          {leftColumnNotes.map((item) => (
+            <View
+              className={styles.card}
+              key={item._id}
+              onClick={() => handleNoteClick(item._id)}
+            >
+              <View className={styles.cover}>
+                <Image src={item.images?.[0]} mode="widthFix" lazyLoad />
+              </View>
+              <View className={styles.content}>
+                <View className={styles.title}>{item.title}</View>
+                <View className={styles.userInfo}>
+                  <View className={styles.userInfoItem}>
+                    <Image src={item.author.avatarUrl} mode="aspectFill" />
+                    <View className={styles.userName}>
+                      {item.author?.nickname || item.author?.phone}
                     </View>
-                    <View className={styles.actionItem}>
-                      <AtIcon color="#999" value="heart" size="16" />
-                      <View className={styles.likes}>{item.likes}</View>
+                  </View>
+                  <View className={styles.actionItem}>
+                    <AtIcon
+                      color={item.isLiked ? "#ff2442" : "#999"}
+                      value={item.isLiked ? "heart-2" : "heart"}
+                      size="16"
+                    />
+                    <View className={styles.likes}>
+                      {formatLikes(item.likes)}
                     </View>
                   </View>
                 </View>
               </View>
-            ))}
+            </View>
+          ))}
         </View>
         <View className={styles.column}>
-          {notes
-            .filter((_, i) => i % 2 === 1)
-            .map((item) => (
-              <View
-                className={styles.card}
-                key={item._id}
-                onClick={() => handleNoteClick(item._id)}
-              >
-                <View className={styles.cover}>
-                  <Image src={item.images?.[0]} mode="widthFix" lazyLoad />
-                </View>
-                <View className={styles.content}>
-                  <View className={styles.title}>{item.title}</View>
-                  <View className={styles.userInfo}>
-                    <View className={styles.userInfoItem}>
-                      <Image src={item.author.avatarUrl} mode="aspectFill" />
-                      <View className={styles.userName}>
-                        {item.author?.nickname || item.author?.phone}
-                      </View>
+          {rightColumnNotes.map((item) => (
+            <View
+              className={styles.card}
+              key={item._id}
+              onClick={() => handleNoteClick(item._id)}
+            >
+              <View className={styles.cover}>
+                <Image src={item.images?.[0]} mode="widthFix" lazyLoad />
+              </View>
+              <View className={styles.content}>
+                <View className={styles.title}>{item.title}</View>
+                <View className={styles.userInfo}>
+                  <View className={styles.userInfoItem}>
+                    <Image src={item.author.avatarUrl} mode="aspectFill" />
+                    <View className={styles.userName}>
+                      {item.author?.nickname || item.author?.phone}
                     </View>
-                    <View className={styles.actionItem}>
-                      <AtIcon
-                        color="#999"
-                        value={item.isLiked ? "heart-2" : "heart"}
-                        size="16"
-                      />
-                      <View className={styles.likes}>
-                        {formatLikes(item.likes)}
-                      </View>
+                  </View>
+                  <View className={styles.actionItem}>
+                    <AtIcon
+                      color={item.isLiked ? "#ff2442" : "#999"}
+                      value={item.isLiked ? "heart-2" : "heart"}
+                      size="16"
+                    />
+                    <View className={styles.likes}>
+                      {formatLikes(item.likes)}
                     </View>
                   </View>
                 </View>
               </View>
-            ))}
+            </View>
+          ))}
         </View>
       </View>
     );
@@ -201,9 +227,7 @@ const HomeContent: React.FC = () => {
                   enableBackToTop
                   refresherEnabled
                   refresherTriggered={loading}
-                  onRefresherRefresh={() => {
-                    fetchNotes(true);
-                  }}
+                  onRefresherRefresh={handlePullRefresh}
                   onScrollToLower={handleLoadMore}
                   lowerThreshold={100}
                 >
@@ -221,7 +245,7 @@ const HomeContent: React.FC = () => {
                       <Text>- 没有更多内容了 -</Text>
                     </View>
                   )}
-                  {!loading && notes.length === 0 && (
+                  {!loading && notes.length === 0 && initialLoadDone && (
                     <View className={styles.empty}>
                       <Text>暂无内容</Text>
                     </View>

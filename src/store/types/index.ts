@@ -142,11 +142,28 @@ export interface NoteState {
   hasMore: boolean;
   currentPage: number;
   pageSize: number;
+  lastFetchTime: number;
+  noteDetailLoading: boolean;
+  noteDetailError: string | null;
+  noteDetailCache: {
+    [key: string]: {
+      data: Note;
+      timestamp: number;
+    };
+  };
+
+  // 缓存管理
+  getNotesFromCache: () => boolean;
+  saveNotesToCache: () => void;
+  clearNotesCache: () => void;
+
+  // 更新列表中的笔记
+  updateNoteInList: (updatedNote: Partial<Note> & { _id: string }) => void;
 
   // 获取笔记列表
-  fetchNotes: (refresh?: boolean) => Promise<void>;
+  fetchNotes: (refresh?: boolean, forceUpdate?: boolean) => Promise<void>;
   // 获取笔记详情
-  fetchNoteDetail: (noteId: string) => Promise<void>;
+  fetchNoteDetail: (noteId: string) => Promise<Note | null>;
   // 点赞笔记
   likeNote: (noteId: string) => Promise<void>;
   // 收藏笔记
