@@ -82,13 +82,19 @@ const UserPage = () => {
   };
 
   useLoad(() => {
-    refreshAllData();
+    if (userInfo?._id) {
+      refreshAllData();
+    }
   });
 
   usePullDownRefresh(async () => {
-    try {
-      await refreshAllData();
-    } finally {
+    if (userInfo?._id) {
+      try {
+        await refreshAllData();
+      } finally {
+        stopPullDownRefresh();
+      }
+    } else {
       stopPullDownRefresh();
     }
   });
@@ -98,16 +104,16 @@ const UserPage = () => {
 
     switch (currentTab) {
       case 0:
-        fetchUserNotes();
+        fetchUserNotes(true);
         break;
       case 1:
-        fetchCollectedNotes();
+        fetchCollectedNotes(true);
         break;
       case 2:
-        fetchLikedNotes();
+        fetchLikedNotes(true);
         break;
     }
-  }, [currentTab]);
+  }, [currentTab, userInfo?._id]);
 
   // 处理点击笔记
   const handleNoteClick = useCallback((noteId: string) => {
